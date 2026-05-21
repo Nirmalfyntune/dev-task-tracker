@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dev Task Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --accent: #2563eb;
+    --accent2: #3b82f6;
+    --accent-glow: rgba(37,99,235,0.18);
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #484f58;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --orange: #f0883e;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --teal: #39d353;
+    --in-progress-bg: rgba(37,99,235,0.13);
+    --in-progress-text: #93c5fd;
+    --done-bg: rgba(63,185,80,0.13);
+    --done-text: #3fb950;
+    --leave-bg: rgba(240,136,62,0.13);
+    --leave-text: #f0883e;
+    --blocked-bg: rgba(248,81,73,0.13);
+    --blocked-text: #f85149;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .logo-badge {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 18px;
+    box-shadow: 0 0 18px rgba(37,99,235,0.4);
+  }
+  .topbar h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 700;
+    background: linear-gradient(90deg, #e6edf3, #93c5fd);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .topbar-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    box-shadow: 0 0 14px rgba(37,99,235,0.35);
+  }
+  .btn-primary:hover { background: var(--accent2); box-shadow: 0 0 20px rgba(37,99,235,0.5); transform: translateY(-1px); }
+  .btn-ghost {
+    background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--border); color: var(--text); }
+  .btn-danger {
+    background: rgba(248,81,73,0.15); color: var(--red); border: 1px solid rgba(248,81,73,0.3);
+  }
+  .btn-danger:hover { background: rgba(248,81,73,0.25); }
+
+  /* STATS ROW */
+  .stats-row {
+    display: flex; gap: 14px;
+    padding: 20px 32px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    flex: 1; min-width: 120px;
+    transition: all 0.25s;
+    cursor: default;
+  }
+  .stat-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 20px var(--accent-glow); }
+  .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; margin-top: 4px; }
+  .stat-value.blue { color: var(--accent2); }
+  .stat-value.green { color: var(--green); }
+  .stat-value.orange { color: var(--orange); }
+  .stat-value.purple { color: var(--purple); }
+
+  /* CONTROLS */
+  .controls {
+    padding: 14px 32px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .search-box {
+    position: relative; flex: 1; min-width: 200px;
+  }
+  .search-box input {
+    width: 100%; padding: 9px 14px 9px 36px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+  .filter-select {
+    padding: 9px 12px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 13px;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; outline: none;
+    transition: border-color 0.2s;
+  }
+  .filter-select:focus { border-color: var(--accent); }
+  .filter-select option { background: var(--surface2); }
+
+  /* TABLE WRAPPER */
+  .table-wrapper {
+    padding: 20px 32px;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    min-width: 900px;
+  }
+  thead th {
+    background: var(--surface2);
+    padding: 12px 14px;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-muted);
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+  }
+  thead th:hover { color: var(--accent2); }
+  thead th .th-inner { display: flex; align-items: center; gap: 5px; }
+  thead th .sort-icon { font-size: 10px; opacity: 0.5; transition: opacity 0.2s; }
+  thead th.sorted .sort-icon { opacity: 1; color: var(--accent2); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s, transform 0.15s;
+    animation: fadeInRow 0.3s ease both;
+  }
+  @keyframes fadeInRow {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  tbody tr:hover { background: rgba(37,99,235,0.06); transform: scale(1.001); }
+  tbody tr.selected { background: rgba(37,99,235,0.1); border-left: 3px solid var(--accent); }
+
+  td {
+    padding: 12px 14px;
+    font-size: 13px;
+    vertical-align: middle;
+  }
+  td.date { color: var(--text-muted); font-size: 12px; white-space: nowrap; }
+  td.member { font-weight: 600; color: var(--text); white-space: nowrap; }
+  td.task-title { color: var(--text); max-width: 240px; line-height: 1.5; }
+  td.pct { font-family: 'Syne', sans-serif; font-weight: 700; text-align: center; }
+  td.notes { color: var(--text-muted); font-size: 12px; max-width: 160px; }
+
+  /* STATUS BADGE */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .badge.in-progress { background: var(--in-progress-bg); color: var(--in-progress-text); }
+  .badge.in-progress .badge-dot { background: var(--in-progress-text); box-shadow: 0 0 6px var(--in-progress-text); animation: pulse 1.5s infinite; }
+  .badge.done { background: var(--done-bg); color: var(--done-text); }
+  .badge.done .badge-dot { background: var(--done-text); }
+  .badge.on-leave { background: var(--leave-bg); color: var(--leave-text); }
+  .badge.on-leave .badge-dot { background: var(--leave-text); }
+  .badge.blocked { background: var(--blocked-bg); color: var(--blocked-text); }
+  .badge.blocked .badge-dot { background: var(--blocked-text); box-shadow: 0 0 6px var(--blocked-text); }
+  @keyframes pulse {
+    0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap { display: flex; align-items: center; gap: 8px; }
+  .progress-bar-bg {
+    flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; min-width: 50px;
+  }
+  .progress-bar-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+  .pct-label { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; min-width: 32px; text-align: right; }
+
+  /* BROKER TAG */
+  .broker-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600;
+    background: rgba(188,140,255,0.12); color: var(--purple);
+    border: 1px solid rgba(188,140,255,0.2);
+    white-space: nowrap;
+  }
+
+  /* TYPE TAG */
+  .type-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 500;
+  }
+  .type-fe { background: rgba(57,211,83,0.1); color: var(--teal); border: 1px solid rgba(57,211,83,0.2); }
+  .type-be { background: rgba(37,99,235,0.1); color: var(--accent2); border: 1px solid rgba(37,99,235,0.2); }
+  .type-au { background: rgba(188,140,255,0.1); color: var(--purple); border: 1px solid rgba(188,140,255,0.2); }
+
+  /* EDITABLE CELL */
+  .editable {
+    cursor: pointer;
+    position: relative;
+    border-radius: 5px;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    transition: background 0.15s;
+  }
+  .editable:hover { background: rgba(255,255,255,0.06); }
+  .editable:hover::after { content: '✎'; font-size: 10px; margin-left: 5px; color: var(--text-dim); }
+
+  /* INLINE EDIT INPUT */
+  .inline-edit {
+    background: var(--surface2); border: 1px solid var(--accent);
+    border-radius: 5px; color: var(--text); font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 4px 8px; width: 100%; outline: none;
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  /* MODAL OVERLAY */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+    z-index: 200; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    width: 560px; max-width: 95vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: modalIn 0.25s ease;
+    max-height: 90vh; overflow-y: auto;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.94) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal h2 { font-family: 'Syne', sans-serif; font-size: 20px; margin-bottom: 20px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1/-1; }
+  .form-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-muted); }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 9px 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .form-group select option { background: var(--surface2); }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+
+  /* TOAST */
+  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 300; display: flex; flex-direction: column; gap: 8px; }
+  .toast {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 18px;
+    font-size: 13px; color: var(--text);
+    animation: toastIn 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    display: flex; align-items: center; gap: 8px;
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: var(--text-muted);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ROW ACTIONS */
+  .row-actions { display: flex; gap: 6px; opacity: 0; transition: opacity 0.2s; }
+  tbody tr:hover .row-actions { opacity: 1; }
+  .action-btn {
+    width: 26px; height: 26px; border-radius: 6px; border: none;
+    cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .action-btn.edit { background: rgba(37,99,235,0.15); color: var(--accent2); }
+  .action-btn.edit:hover { background: rgba(37,99,235,0.3); }
+  .action-btn.delete { background: rgba(248,81,73,0.12); color: var(--red); }
+  .action-btn.delete:hover { background: rgba(248,81,73,0.25); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .topbar, .stats-row, .controls, .table-wrapper { padding: 14px 12px; }
+    .stats-row { gap: 8px; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-badge">D</div>
+    <div>
+      <div class="topbar h1" style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;background:linear-gradient(90deg,#e6edf3,#93c5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Dev Task Tracker</div>
+      <div class="topbar-sub" id="today-date"></div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="btn btn-primary" onclick="openAddModal()">＋ Add Task</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-row" id="stats-row"></div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search tasks, members, brokers…" oninput="renderTable()"/>
+  </div>
+  <select class="filter-select" id="filter-status" onchange="renderTable()">
+    <option value="">All Statuses</option>
+    <option value="In Progress">In Progress</option>
+    <option value="Done">Done</option>
+    <option value="On Leave">On Leave</option>
+    <option value="Blocked">Blocked</option>
+  </select>
+  <select class="filter-select" id="filter-type" onchange="renderTable()">
+    <option value="">All Types</option>
+    <option value="Backend">Backend</option>
+    <option value="AU Backend">AU Backend</option>
+    <option value="Frontend">Frontend</option>
+  </select>
+  <select class="filter-select" id="filter-broker" onchange="renderTable()">
+    <option value="">All Brokers</option>
+  </select>
+  <select class="filter-select" id="filter-member" onchange="renderTable()">
+    <option value="">All Members</option>
+  </select>
+  <button class="btn btn-ghost" onclick="clearFilters()">✕ Clear</button>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrapper">
+  <table id="task-table">
+    <thead>
+      <tr>
+        <th onclick="sortBy('assignDate')"><div class="th-inner">Assign Date<span class="sort-icon">↕</span></div></th>
+        <th onclick="sortBy('member')"><div class="th-inner">Team Member<span class="sort-icon">↕</span></div></th>
+        <th onclick="sortBy('type')"><div class="th-inner">Type<span class="sort-icon">↕</span></div></th>
+        <th onclick="sortBy('broker')"><div class="th-inner">Broker Name<span class="sort-icon">↕</span></div></th>
+        <th onclick="sortBy('title')"><div class="th-inner">Task Title<span class="sort-icon">↕</span></div></th>
+        <th onclick="sortBy('status')"><div class="th-inner">Status<span class="sort-icon">↕</span></div></th>
+        <th onclick="sortBy('dueTime')"><div class="th-inner">Due Time<span class="sort-icon">↕</span></div></th>
+        <th onclick="sortBy('pct')"><div class="th-inner">% Done<span class="sort-icon">↕</span></div></th>
+        <th>Notes / Blockers</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+  <div id="empty-state" class="empty-state" style="display:none;">
+    <div class="icon">🔍</div>
+    <p>No tasks match your filters.</p>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2 id="modal-title">Add New Task</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Assign Date</label>
+        <input type="date" id="f-date"/>
+      </div>
+      <div class="form-group">
+        <label>Team Member</label>
+        <input type="text" id="f-member" placeholder="Full name"/>
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="f-type">
+          <option>Backend</option>
+          <option>AU Backend</option>
+          <option>Frontend</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Broker Name</label>
+        <input type="text" id="f-broker" placeholder="e.g. Hero Broker, Chola, SBI…"/>
+      </div>
+      <div class="form-group full">
+        <label>Task Title</label>
+        <textarea id="f-title" placeholder="Describe the task…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="f-status">
+          <option>In Progress</option>
+          <option>Done</option>
+          <option>Blocked</option>
+          <option>On Leave</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Due Date</label>
+        <input type="date" id="f-due"/>
+      </div>
+      <div class="form-group">
+        <label>% Done (0–100)</label>
+        <input type="number" id="f-pct" min="0" max="100" placeholder="0"/>
+      </div>
+      <div class="form-group full">
+        <label>Notes / Blockers</label>
+        <input type="text" id="f-notes" placeholder="Any blockers or notes…"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+let tasks = [
+  { id:1, assignDate:'2026-05-14', member:'Raj Kale',           type:'Backend',    broker:'Godiigit',     title:'Godiigit PAYD (half day)',               status:'In Progress', dueTime:'', pct:40,  notes:'' },
+  { id:2, assignDate:'2026-05-11', member:'Aniket Kamble',      type:'AU Backend', broker:'AU',           title:'Call Centre - AU API implementation',    status:'In Progress', dueTime:'', pct:70,  notes:'' },
+  { id:3, assignDate:'2026-05-21', member:'Dusmanta Naidu',     type:'Backend',    broker:'Hero Broker',  title:'Oriental New API kit integration for Hero Broker', status:'In Progress', dueTime:'', pct:0,   notes:'' },
+  { id:4, assignDate:'2026-05-14', member:'Sayali Patil',       type:'Backend',    broker:'Hero Broker',  title:'FG Renewal Integration for Hero Broker', status:'In Progress', dueTime:'', pct:10,  notes:'In review' },
+  { id:5, assignDate:'2026-05-20', member:'Aniket Kamble',      type:'AU Backend', broker:'Chola',        title:'SFDC - IC wise changes start with Chola\n1. Chola Tag provided by IC. Needs to implement', status:'In Progress', dueTime:'', pct:0,   notes:'' },
+  { id:6, assignDate:'2026-05-21', member:'Aniket Mahadev Magadum', type:'AU Backend', broker:'AU',       title:'DATA Push - Transfer and Settlement\nDaily Task - Code Review', status:'In Progress', dueTime:'', pct:0,   notes:'' },
+  { id:7, assignDate:'2026-05-14', member:'Praveen Kumar Sharma', type:'Backend',  broker:'Hero Broker',  title:'Mongo and MySQL setup for all Brokers\nHero Checksum', status:'In Progress', dueTime:'', pct:0,   notes:'' },
+  { id:8, assignDate:'2026-05-20', member:'Joel Dcunha',        type:'Backend',    broker:'Hero/Paytm',   title:'National Premium mismatch issue, Hero Checksum, Paytm prod observation', status:'In Progress', dueTime:'', pct:0,   notes:'' },
+  { id:9, assignDate:'2026-05-14', member:'Nikhil Yelgaonkar',  type:'AU Backend', broker:'AU',           title:'AU Observation\n1. Failed Renewal implementation along with Dashboard Team\n2. Git No-532676 - Prod AU sanity 714 - Renewal Sanity', status:'In Progress', dueTime:'', pct:0,   notes:'' },
+  { id:10,assignDate:'2026-05-14', member:'Ahmed Raza Idrisi',  type:'AU Backend', broker:'AU',           title:'',                                        status:'On Leave',   dueTime:'', pct:0,   notes:'cancel payment changes' },
+  { id:11,assignDate:'2026-05-14', member:'Gouresh Baraskar',   type:'Backend',    broker:'All Brokers',  title:'Production support for all brokers',      status:'In Progress', dueTime:'', pct:0,   notes:'' },
+  { id:12,assignDate:'2026-05-16', member:'Pradeep Parihar',    type:'Backend',    broker:'TATA',         title:'TATA Renewal Upscale and Down Scale changes provided by IC', status:'In Progress', dueTime:'', pct:0,   notes:'' },
+  { id:13,assignDate:'2026-05-20', member:'Pradeep Parihar',    type:'Backend',    broker:'SBI',          title:'Fixing GSTIN issue for SBI GCV',          status:'In Progress', dueTime:'', pct:0,   notes:'' },
+  { id:14,assignDate:'2026-05-20', member:'Pradeep Parihar',    type:'Backend',    broker:'Shriram',      title:'BH series implementation for Shriram along with new PG changes on UAT', status:'In Progress', dueTime:'', pct:0,   notes:'' },
+];
+let nextId = 15;
+let sortCol = 'assignDate', sortDir = 1;
+let editingId = null;
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+const getPctColor = p => p >= 80 ? '#3fb950' : p >= 40 ? '#d29922' : '#f0883e';
+const statusClass = s => ({ 'In Progress':'in-progress','Done':'done','On Leave':'on-leave','Blocked':'blocked' }[s] || 'in-progress');
+const typeClass = t => ({ 'Backend':'type-be','AU Backend':'type-au','Frontend':'type-fe' }[t] || 'type-be');
+const typeLabel = t => ({ 'Backend':'⚙ Backend','AU Backend':'🔷 AU Backend','Frontend':'🖥 Frontend' }[t] || t);
+const fmtDate = d => d ? d.split('-').reverse().join('.') : '';
+
+function toast(msg, type='✅') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span>${type}</span> ${msg}`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ─── STATS ───────────────────────────────────────────────────────────────────
+function renderStats() {
+  const total = tasks.length;
+  const inProg = tasks.filter(t=>t.status==='In Progress').length;
+  const done = tasks.filter(t=>t.status==='Done').length;
+  const blocked = tasks.filter(t=>t.status==='Blocked').length;
+  const avgPct = total ? Math.round(tasks.reduce((s,t)=>s+t.pct,0)/total) : 0;
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Tasks</div><div class="stat-value blue">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">In Progress</div><div class="stat-value purple">${inProg}</div></div>
+    <div class="stat-card"><div class="stat-label">Done</div><div class="stat-value green">${done}</div></div>
+    <div class="stat-card"><div class="stat-label">Blocked</div><div class="stat-value orange">${blocked}</div></div>
+    <div class="stat-card"><div class="stat-label">Avg % Done</div><div class="stat-value" style="color:#d29922">${avgPct}%</div></div>
+  `;
+}
+
+// ─── FILTERS ─────────────────────────────────────────────────────────────────
+function populateFilters() {
+  const brokers = [...new Set(tasks.map(t=>t.broker).filter(Boolean))].sort();
+  const members = [...new Set(tasks.map(t=>t.member))].sort();
+  const fb = document.getElementById('filter-broker');
+  const fm = document.getElementById('filter-member');
+  const bv = fb.value, mv = fm.value;
+  fb.innerHTML = '<option value="">All Brokers</option>' + brokers.map(b=>`<option value="${b}">${b}</option>`).join('');
+  fm.innerHTML = '<option value="">All Members</option>' + members.map(m=>`<option value="${m}">${m}</option>`).join('');
+  fb.value = bv; fm.value = mv;
+}
+
+function clearFilters() {
+  document.getElementById('search-input').value='';
+  document.getElementById('filter-status').value='';
+  document.getElementById('filter-type').value='';
+  document.getElementById('filter-broker').value='';
+  document.getElementById('filter-member').value='';
+  renderTable();
+}
+
+// ─── SORT ────────────────────────────────────────────────────────────────────
+function sortBy(col) {
+  if(sortCol===col) sortDir*=-1; else { sortCol=col; sortDir=1; }
+  document.querySelectorAll('thead th').forEach(th=>th.classList.remove('sorted'));
+  renderTable();
+}
+
+// ─── RENDER TABLE ─────────────────────────────────────────────────────────────
+function renderTable() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const fStatus = document.getElementById('filter-status').value;
+  const fType = document.getElementById('filter-type').value;
+  const fBroker = document.getElementById('filter-broker').value;
+  const fMember = document.getElementById('filter-member').value;
+
+  let filtered = tasks.filter(t => {
+    const haystack = [t.member,t.title,t.broker,t.notes,t.type].join(' ').toLowerCase();
+    return (!search || haystack.includes(search))
+      && (!fStatus || t.status===fStatus)
+      && (!fType || t.type===fType)
+      && (!fBroker || t.broker===fBroker)
+      && (!fMember || t.member===fMember);
+  });
+
+  const colMap = { assignDate:'assignDate', member:'member', type:'type', broker:'broker', title:'title', status:'status', dueTime:'dueTime', pct:'pct' };
+  const key = colMap[sortCol] || sortCol;
+  filtered.sort((a,b) => {
+    let av = a[key]||'', bv = b[key]||'';
+    if(key==='pct') { av=+av; bv=+bv; }
+    return av>bv ? sortDir : av<bv ? -sortDir : 0;
+  });
+
+  const tbody = document.getElementById('table-body');
+  const empty = document.getElementById('empty-state');
+
+  if(!filtered.length) {
+    tbody.innerHTML=''; empty.style.display='block'; return;
+  }
+  empty.style.display='none';
+
+  tbody.innerHTML = filtered.map((t,i) => {
+    const pctColor = getPctColor(t.pct);
+    const pctDisplay = t.pct > 0 ? `
+      <div class="progress-wrap">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${t.pct}%;background:${pctColor}"></div></div>
+        <span class="pct-label" style="color:${pctColor}">${t.pct}%</span>
+      </div>` : `<span style="color:var(--text-dim);font-size:12px">—</span>`;
+
+    return `<tr data-id="${t.id}" style="animation-delay:${i*0.03}s">
+      <td class="date editable" onclick="editCell(${t.id},'assignDate',this)">${fmtDate(t.assignDate)}</td>
+      <td class="member">${t.member}</td>
+      <td><span class="type-tag ${typeClass(t.type)}">${typeLabel(t.type)}</span></td>
+      <td>${t.broker ? `<span class="broker-tag">🏢 ${t.broker}</span>` : '<span style="color:var(--text-dim);font-size:12px">—</span>'}</td>
+      <td class="task-title editable" onclick="editCell(${t.id},'title',this)" style="white-space:pre-line">${t.title||'<span style="color:var(--text-dim)">—</span>'}</td>
+      <td>
+        <select class="badge ${statusClass(t.status)}" onchange="updateStatus(${t.id},this.value)" style="border:none;background:inherit;color:inherit;font:inherit;cursor:pointer;padding:4px 8px;border-radius:20px;outline:none;">
+          <option ${t.status==='In Progress'?'selected':''}>In Progress</option>
+          <option ${t.status==='Done'?'selected':''}>Done</option>
+          <option ${t.status==='Blocked'?'selected':''}>Blocked</option>
+          <option ${t.status==='On Leave'?'selected':''}>On Leave</option>
+        </select>
+      </td>
+      <td class="date">${t.dueTime ? fmtDate(t.dueTime) : '<span style="color:var(--text-dim)">—</span>'}</td>
+      <td>${pctDisplay}</td>
+      <td class="notes editable" onclick="editCell(${t.id},'notes',this)">${t.notes||'<span style="color:var(--text-dim)">—</span>'}</td>
+      <td>
+        <div class="row-actions">
+          <button class="action-btn edit" onclick="openEditModal(${t.id})" title="Edit">✎</button>
+          <button class="action-btn delete" onclick="deleteTask(${t.id})" title="Delete">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  renderStats();
+  populateFilters();
+}
+
+// ─── INLINE CELL EDIT ────────────────────────────────────────────────────────
+function editCell(id, field, cell) {
+  if(cell.querySelector('input,textarea')) return;
+  const t = tasks.find(x=>x.id===id);
+  const val = t[field]||'';
+  const isMulti = field==='title';
+  const el = document.createElement(isMulti?'textarea':'input');
+  el.className='inline-edit';
+  el.value = val;
+  if(isMulti) { el.rows=3; el.style.minHeight='60px'; }
+  cell.innerHTML='';
+  cell.appendChild(el);
+  el.focus();
+  const save = () => {
+    t[field] = el.value.trim();
+    renderTable();
+    toast('Cell updated');
+  };
+  el.addEventListener('blur', save);
+  el.addEventListener('keydown', e => { if(e.key==='Enter' && !isMulti) { e.preventDefault(); save(); } if(e.key==='Escape') renderTable(); });
+}
+
+// ─── STATUS INLINE ───────────────────────────────────────────────────────────
+function updateStatus(id, val) {
+  const t = tasks.find(x=>x.id===id);
+  t.status = val;
+  renderTable();
+  toast('Status updated to ' + val);
+}
+
+// ─── DELETE ──────────────────────────────────────────────────────────────────
+function deleteTask(id) {
+  if(!confirm('Delete this task?')) return;
+  tasks = tasks.filter(t=>t.id!==id);
+  renderTable();
+  toast('Task deleted','🗑');
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Add New Task';
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-member').value = '';
+  document.getElementById('f-type').value = 'Backend';
+  document.getElementById('f-broker').value = '';
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-status').value = 'In Progress';
+  document.getElementById('f-due').value = '';
+  document.getElementById('f-pct').value = '';
+  document.getElementById('f-notes').value = '';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openEditModal(id) {
+  editingId = id;
+  const t = tasks.find(x=>x.id===id);
+  document.getElementById('modal-title').textContent = 'Edit Task';
+  document.getElementById('f-date').value = t.assignDate;
+  document.getElementById('f-member').value = t.member;
+  document.getElementById('f-type').value = t.type;
+  document.getElementById('f-broker').value = t.broker;
+  document.getElementById('f-title').value = t.title;
+  document.getElementById('f-status').value = t.status;
+  document.getElementById('f-due').value = t.dueTime;
+  document.getElementById('f-pct').value = t.pct;
+  document.getElementById('f-notes').value = t.notes;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function saveTask() {
+  const data = {
+    assignDate: document.getElementById('f-date').value,
+    member: document.getElementById('f-member').value.trim(),
+    type: document.getElementById('f-type').value,
+    broker: document.getElementById('f-broker').value.trim(),
+    title: document.getElementById('f-title').value.trim(),
+    status: document.getElementById('f-status').value,
+    dueTime: document.getElementById('f-due').value,
+    pct: parseInt(document.getElementById('f-pct').value)||0,
+    notes: document.getElementById('f-notes').value.trim(),
+  };
+  if(!data.member) { alert('Team Member is required'); return; }
+  if(editingId) {
+    const t = tasks.find(x=>x.id===editingId);
+    Object.assign(t, data);
+    toast('Task updated ✨');
+  } else {
+    tasks.push({ id: nextId++, ...data });
+    toast('Task added 🎉');
+  }
+  closeModal();
+  renderTable();
+}
+
+// ─── EXPORT CSV ──────────────────────────────────────────────────────────────
+function exportCSV() {
+  const headers = ['Assign Date','Team Member','Type','Broker','Task Title','Status','Due Date','% Done','Notes'];
+  const rows = tasks.map(t => [fmtDate(t.assignDate),t.member,t.type,t.broker,`"${t.title.replace(/"/g,'""')}"`,t.status,fmtDate(t.dueTime),t.pct,t.notes]);
+  const csv = [headers,...rows].map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv,' + encodeURIComponent(csv);
+  a.download = 'dev-tasks.csv';
+  a.click();
+  toast('CSV exported 📄');
+}
+
+// ─── KEYBOARD ────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') closeModal();
+});
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if(e.target===e.currentTarget) closeModal();
+});
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+renderStats();
+populateFilters();
+renderTable();
+</script>
+</body>
+</html>
