@@ -771,7 +771,7 @@ function saveTask() {
   renderTable();
 }
 
-// ─── EXPORT EXCEL ────────────────────────────────────────────────────────────
+// ─── EXPORT CSV (opens in Excel without any warning) ─────────────────────────
 function getFilteredTasks() {
   const search  = document.getElementById('search-input').value.toLowerCase();
   const fStatus = document.getElementById('filter-status').value;
@@ -794,67 +794,45 @@ function exportExcel() {
 
   const headers = ['Assign Date','Team Member','Type','Broker Name','Task Title','Status','Due Date','% Done','Notes'];
 
-  // Build HTML table which Excel can open natively
-  let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
-    xmlns:x="urn:schemas-microsoft-com:office:excel"
-    xmlns="http://www.w3.org/TR/REC-html40">
-  <head><meta charset="UTF-8">
-  <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
-  <x:ExcelWorksheet><x:Name>Dev Tasks</x:Name>
-  <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
-  </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-  </head><body><table border="1">`;
-
-  // Header row
-  html += '<tr>' + headers.map(h =>
-    `<th style="background:#2563eb;color:#fff;font-weight:bold;padding:8px 12px;white-space:nowrap;">${h}</th>`
-  ).join('') + '</tr>';
-
-  // Status colors for Excel
-  const statusColors = {
-    'In Progress':     '#dbeafe',
-    'Done':            '#dcfce7',
-    'On Leave':        '#ffedd5',
-    'Blocked':         '#fee2e2',
-    'On Hold':         '#fef9c3',
-    'Raise to IC':     '#ede9fe',
-    'Raise to Broker': '#ccfbf1',
+  const escape = val => {
+    const str = (val === null || val === undefined) ? '' : String(val);
+    // wrap in quotes if it contains comma, newline or quote
+    if (str.includes(',') || str.includes('\n') || str.includes('"')) {
+      return '"' + str.replace(/"/g, '""').replace(/\n/g, ' | ') + '"';
+    }
+    return str;
   };
 
-  // Data rows
-  filtered.forEach((t, i) => {
-    const bg = i % 2 === 0 ? '#ffffff' : '#f8fafc';
-    const sBg = statusColors[t.status] || '#ffffff';
-    html += `<tr>
-      <td style="background:${bg};padding:6px 10px;">${fmtDate(t.assignDate)}</td>
-      <td style="background:${bg};padding:6px 10px;font-weight:bold;">${t.member}</td>
-      <td style="background:${bg};padding:6px 10px;">${t.type}</td>
-      <td style="background:${bg};padding:6px 10px;">${t.broker}</td>
-      <td style="background:${bg};padding:6px 10px;">${t.title.replace(/\n/g,' | ')}</td>
-      <td style="background:${sBg};padding:6px 10px;font-weight:bold;">${t.status}</td>
-      <td style="background:${bg};padding:6px 10px;">${fmtDate(t.dueTime)}</td>
-      <td style="background:${bg};padding:6px 10px;text-align:center;">${t.pct}%</td>
-      <td style="background:${bg};padding:6px 10px;">${t.notes}</td>
-    </tr>`;
-  });
+  const rows = filtered.map(t => [
+    fmtDate(t.assignDate),
+    t.member,
+    t.type,
+    t.broker,
+    t.title,
+    t.status,
+    fmtDate(t.dueTime),
+    t.pct + '%',
+    t.notes
+  ].map(escape).join(','));
 
-  html += '</table></body></html>';
+  // BOM (\uFEFF) ensures Excel opens with correct encoding
+  const csv = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
 
-  const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   const now  = new Date().toLocaleDateString('en-IN').replace(/\//g,'-');
 
-  // File name reflects active filters
   const fStatus = document.getElementById('filter-status').value;
   const fMember = document.getElementById('filter-member').value;
   const fBroker = document.getElementById('filter-broker').value;
   const suffix  = [fStatus, fMember, fBroker].filter(Boolean).join('_') || 'All';
+
   a.href = url;
-  a.download = `DevTasks_${suffix}_${now}.xls`;
+  a.download = `DevTasks_${suffix}_${now}.csv`;
   a.click();
   URL.revokeObjectURL(url);
-  toast(`Exported ${filtered.length} task(s) to Excel 📊`);
+  toast(`Exported ${filtered.length} task(s) ✅`);
 }
 
 // ─── KEYBOARD ────────────────────────────────────────────────────────────────
