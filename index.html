@@ -531,7 +531,6 @@
 // ─── LOCAL STORAGE DATA CORNERSTONE ENGINE & AUTOMATED MIGRATION LAYER ────────
 let tasks = JSON.parse(localStorage.getItem('dev_tasks_data')) || [];
 
-// AUTO-MIGRATION CONVERTOR LAYER: Detects flat array files and structuralizes smoothly
 let updatedMigration = false;
 tasks = tasks.map(t => {
   let migrated = false;
@@ -615,7 +614,6 @@ function syncMainTaskRollups(mainTask) {
   const doneCount = mainTask.subTasks.filter(st => st.status === 'Done').length;
   mainTask.pct = Math.round((doneCount / total) * 100);
 
-  // Status rollup mapping rules
   if (doneCount === total) {
     if(mainTask.status !== 'Done') {
       mainTask.status = 'Done';
@@ -771,13 +769,11 @@ function renderTable() {
   const fMember = document.getElementById('filter-member').value;
 
   let filtered = tasks.filter(t => {
-    // deep search scanning sub-task boundaries alongside parent criteria
     const subtasksHaystack = (t.subTasks || []).map(st => (st.title||'') + ' ' + (st.member||'')).join(' ');
     const haystack = [(t.member||''),(t.title||''),(t.broker||''),(t.notes||''),(t.type||''), subtasksHaystack].join(' ').toLowerCase();
     
     const matchesFrom = !fromDate || t.assignDate >= fromDate;
     const matchesTo = !toDate || t.assignDate <= toDate;
-    
     const matchesMember = !fMember || t.member === fMember || (t.subTasks || []).some(st => st.member === fMember);
 
     return (!search || haystack.includes(search))
@@ -812,7 +808,6 @@ function renderTable() {
     const subrowStyleDisplay = expandedTaskIds.has(t.id) ? 'table-row' : 'none';
     const isStatusDisabled = currentRole === 'Viewer' ? 'disabled' : '';
 
-    // HTML Output for parent task row
     htmlOut += `
       <tr data-id="${t.id}" class="main-task-row ${rowDoneClass}">
         <td><span class="expand-btn ${isArrowExpanded}" onclick="toggleTaskExpand(${t.id}, this)">▶</span></td>
@@ -1020,7 +1015,6 @@ function openAddModal() {
   document.getElementById('f-notes').value = '';
   document.getElementById('modal-subtasks-container').innerHTML = '';
   
-  // Initialize with single subtask deliverable trace baseline block
   addBlankSubtaskFormRow('Deliverable Core Execution Base');
   document.getElementById('modal-overlay').classList.add('open');
 }
@@ -1061,10 +1055,8 @@ function saveTask() {
   const memberLeadInput = document.getElementById('f-member').value.trim();
   if(!memberLeadInput) { alert('Main Team Member Lead Assignee is required'); return; }
 
-  // Extract form compiled arrays for nested children rows
   const subRows = document.querySelectorAll('.modal-subtask-row');
   let compiledSubtasks = [];
-
   const oldTaskRef = editingId ? tasks.find(x => x.id === editingId) : null;
 
   subRows.forEach(row => {
@@ -1162,12 +1154,42 @@ function renderTimelineLogsList(logArray, targetContainer) {
 
 function closeLogModal() { document.getElementById('log-modal-overlay').classList.remove('open'); }
 
-// ─── DATA SHEET EXPORT CONTROLLERS ───────────────────────────────────────────
+// ─── DATA SHEET EXPORT CONTROLLERS (FIXED SCOPE REASSIGNMENT) ────────────────
+function getFilteredTasks() {
+  const search  = document.getElementById('search-input').value.toLowerCase();
+  const fromDate = document.getElementById('filter-from-date').value;
+  const toDate = document.getElementById('filter-to-date').value;
+  const fStatus = document.getElementById('filter-status').value;
+  const fType   = document.getElementById('filter-type').value;
+  const fBroker = document.getElementById('filter-broker').value;
+  const fMember = document.getElementById('filter-member').value;
+  return tasks.filter(t => {
+    const subtasksHaystack = (t.subTasks || []).map(st => (st.title||'') + ' ' + (st.member||'')).join(' ');
+    const hay = [(t.member||''),(t.title||''),(t.broker||''),(t.notes||''),(t.type||''), subtasksHaystack].join(' ').toLowerCase();
+    const matchesFrom = !fromDate || t.assignDate >= fromDate;
+    const matchesTo = !toDate || t.assignDate <= toDate;
+    const matchesMember = !fMember || t.member === fMember || (t.subTasks || []).some(st => st.member === fMember);
+
+    return (!search || hay.includes(search))
+      && matchesFrom && matchesTo
+      && (!fStatus || t.status===fStatus)
+      && (!fType   || t.type===fType)
+      && (!fBroker || t.broker===fBroker)
+      && matchesMember;
+  });
+}
+
 function exportExcel() {
   const filtered = getFilteredTasks();
   if (!filtered.length) { toast('No tasks to export', '⚠️'); return; }
 
-  const headers = ['Assign Date','Complete Date','Lead Member','Type','Broker Name','Main Task Title','Status','Due Date','% Done','Notes'];
+  // Layman-friendly column structure explicitly detailing hierarchical connections
+  const headers = [
+    'Main Assign Date', 'Main Complete Date', 'Lead Member', 'Type', 'Broker Name', 
+    'Main Task Title', 'Overall Status', 'Due Date', 'Total % Done', 'Notes / Blockers',
+    'Sub-Task Assigned Member', 'Sub-Task Assign Date', 'Sub-Task Complete Date', 'Sub-Task Action Scope Title', 'Sub-Task Status'
+  ];
+
   const escape = val => {
     const str = (val === null || val === undefined) ? '' : String(val);
     if (str.includes(',') || str.includes('\n') || str.includes('"')) {
@@ -1176,30 +1198,47 @@ function exportExcel() {
     return str;
   };
 
-  const rows = filtered.map(t => [
-    fmtDate(t.assignDate),
-    fmtDate(t.completionDate),
-    t.member,
-    t.type,
-    t.broker,
-    t.title,
-    t.status,
-    fmtDate(t.dueTime),
-    t.pct + '%',
-    t.notes
-  ].map(escape).join(','));
+  let rows = [];
+
+  filtered.forEach(t => {
+    const subTasksList = t.subTasks || [];
+    if (subTasksList.length === 0) {
+      // Fallback row formatting if a task context ever has zero sub-tasks
+      rows.push([
+        fmtDate(t.assignDate), fmtDate(t.completionDate) || '—', t.member, t.type, t.broker, 
+        t.title, t.status, fmtDate(t.dueTime) || '—', t.pct + '%', t.notes || '—',
+        '—', '—', '—', '—', '—'
+      ].map(escape).join(','));
+    } else {
+      // Maps nested child layers to clean, flat layman lines automatically
+      subTasksList.forEach(st => {
+        rows.push([
+          fmtDate(t.assignDate), fmtDate(t.completionDate) || '—', t.member, t.type, t.broker, 
+          t.title, t.status, fmtDate(t.dueTime) || '—', t.pct + '%', t.notes || '—',
+          st.member || t.member, fmtDate(st.assignDate), fmtDate(st.completionDate) || '—', st.title, st.status
+        ].map(escape).join(','));
+      });
+    }
+  });
 
   const csv = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  now = new Date().toLocaleDateString('en-IN').replace(/\//g,'-');
+  
+  // FIXED: Explicitly scoped local time strings to prevent compilation re-assignment crashes
+  const nowStr = new Date().toLocaleDateString('en-IN').replace(/\//g,'-');
+
+  const fStatus = document.getElementById('filter-status').value;
+  const fMember = document.getElementById('filter-member').value;
+  const fBroker = document.getElementById('filter-broker').value;
+  const suffix  = [fStatus, fMember, fBroker].filter(Boolean).join('_') || 'All';
 
   a.href = url;
-  a.download = `DevTasks_Hierarchical_${now}.csv`;
+  a.download = `DevTasks_DetailedReport_${suffix}_${nowStr}.csv`;
   a.click();
   URL.revokeObjectURL(url);
-  toast(`Exported sheets successfully ✅`);
+  toast(`Report downloaded successfully ✅`);
 }
 
 // Keyboard Escape Hook
