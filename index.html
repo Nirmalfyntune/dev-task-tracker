@@ -61,6 +61,8 @@
     top: 0;
     z-index: 100;
     backdrop-filter: blur(12px);
+    flex-wrap: wrap;
+    gap: 16px;
   }
   .topbar-left { display: flex; align-items: center; gap: 14px; }
   .logo-badge {
@@ -79,7 +81,19 @@
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
   .topbar-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
-  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+  /* ROLE ACCESS SELECTION PANEL */
+  .role-panel {
+    display: flex; align-items: center; gap: 8px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px;
+  }
+  .role-panel label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--accent2); letter-spacing: 0.5px;}
+  .role-select {
+    background: transparent; border: none; color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600; outline: none; cursor: pointer;
+  }
+  .role-select option { background: var(--surface2); color: var(--text); }
 
   .btn {
     display: inline-flex; align-items: center; gap: 7px;
@@ -271,10 +285,16 @@
 
   /* EDITABLE CELL */
   .editable {
-    cursor: pointer; position: relative; border-radius: 5px; padding: 2px 4px; margin: -2px -4px; transition: background 0.15s;
+    position: relative; border-radius: 5px; padding: 2px 4px; margin: -2px -4px; transition: background 0.15s;
   }
-  .editable:hover { background: rgba(255,255,255,0.06); }
-  .editable:hover::after { content: '✎'; font-size: 10px; margin-left: 5px; color: var(--text-dim); }
+  body.role-admin .editable, body.role-manager .editable-pct {
+    cursor: pointer;
+  }
+  body.role-admin .editable:hover { background: rgba(255,255,255,0.06); }
+  body.role-admin .editable:hover::after { content: '✎'; font-size: 10px; margin-left: 5px; color: var(--text-dim); }
+  
+  body.role-manager .editable-pct:hover { background: rgba(255,255,255,0.06); }
+  body.role-manager .editable-pct:hover::after { content: '✎'; font-size: 10px; margin-left: 5px; color: var(--text-dim); }
 
   /* INLINE EDIT INPUT */
   .inline-edit {
@@ -340,6 +360,18 @@
   .action-btn.delete { background: rgba(248,81,73,0.12); color: var(--red); }
   .action-btn.delete:hover { background: rgba(248,81,73,0.25); }
 
+  /* ROLE-BASED CONDITIONAL DISPLAY RULES */
+  body.role-viewer .action-btn.delete,
+  body.role-viewer .action-btn.clone,
+  body.role-viewer .action-btn.edit,
+  body.role-viewer #btn-add-task,
+  body.role-manager .action-btn.delete,
+  body.role-manager .action-btn.clone,
+  body.role-manager .action-btn.edit,
+  body.role-manager #btn-add-task {
+    display: none !important;
+  }
+
   @media (max-width: 990px) {
     .controls { gap: 8px; }
   }
@@ -352,7 +384,6 @@
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-left">
     <div class="logo-badge">D</div>
@@ -361,23 +392,30 @@
       <div class="topbar-sub" id="today-date"></div>
     </div>
   </div>
+  
   <div class="topbar-right">
+    <div class="role-panel">
+      <label>Workspace Access Role</label>
+      <select class="role-select" id="app-user-role" onchange="changeUserRole(this.value)">
+        <option value="Admin">Admin (Full Access)</option>
+        <option value="Manager">Manager (Edit Status Only)</option>
+        <option value="Viewer">Viewer (Read-Only Mode)</option>
+      </select>
+    </div>
+
     <button class="btn btn-ghost" onclick="exportExcel()">⬇ Export Excel</button>
-    <button class="btn btn-primary" onclick="openAddModal()">＋ Add Task</button>
+    <button class="btn btn-primary" id="btn-add-task" onclick="openAddModal()">＋ Add Task</button>
   </div>
 </div>
 
-<!-- STATS -->
 <div class="stats-row" id="stats-row"></div>
 
-<!-- CONTROLS -->
 <div class="controls">
   <div class="search-box">
     <span class="search-icon">🔍</span>
     <input type="text" id="search-input" placeholder="Search tasks, members, brokers…" oninput="renderTable()"/>
   </div>
   
-  <!-- DATE RANGE FILTERS -->
   <div class="date-filter-group">
     <label>From</label>
     <input type="date" id="filter-from-date" onchange="renderTable()"/>
@@ -412,7 +450,6 @@
   <button class="btn btn-ghost" onclick="clearFilters()">✕ Clear</button>
 </div>
 
-<!-- TABLE -->
 <div class="table-wrapper">
   <table id="task-table">
     <thead>
@@ -437,7 +474,6 @@
   </div>
 </div>
 
-<!-- ADD/EDIT MODAL -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
     <h2 id="modal-title">Add New Task</h2>
@@ -498,42 +534,37 @@
   </div>
 </div>
 
-<!-- TOAST CONTAINER -->
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-// ─── INITIAL APP DATA BACKUP ──────────────────────────────────────────────────
-const initialTasks = [
-  { id:1, assignDate:'2026-05-14', member:'Raj Kale',           type:'Backend',    broker:'Godiigit',    title:'Godiigit PAYD (half day)',              status:'In Progress', dueTime:'', pct:40,  notes:'' },
-  { id:2, assignDate:'2026-05-11', member:'Aniket Kamble',      type:'AU Backend', broker:'AU',           title:'Call Centre - AU API implementation',    status:'In Progress', dueTime:'', pct:70,  notes:'' },
-  { id:3, assignDate:'2026-05-21', member:'Dusmanta Naidu',     type:'Backend',    broker:'Hero Broker',  title:'Oriental New API kit integration for Hero Broker', status:'In Progress', dueTime:'', pct:0,   notes:'' },
-  { id:4, assignDate:'2026-05-14', member:'Sayali Patil',       type:'Backend',    broker:'Hero Broker',  title:'FG Renewal Integration for Hero Broker', status:'In Progress', dueTime:'', pct:10,  notes:'In review' },
-  { id:5, assignDate:'2026-05-20', member:'Aniket Kamble',      type:'AU Backend', broker:'Chola',        title:'SFDC - IC wise changes start with Chola\n1. Chola Tag provided by IC. Needs to implement', status:'In Progress', dueTime:'', pct:0,   notes:'' },
-  { id:6, assignDate:'2026-05-21', member:'Aniket Mahadev Magadum', type:'AU Backend', broker:'AU',       title:'DATA Push - Transfer and Settlement\nDaily Task - Code Review', status:'In Progress', dueTime:'', pct:0,   notes:'' },
-  { id:7, assignDate:'2026-05-14', member:'Praveen Kumar Sharma', type:'Backend',  broker:'Hero Broker',  title:'Mongo and MySQL setup for all Brokers\nHero Checksum', status:'In Progress', dueTime:'', pct:0,   notes:'' },
-  { id:8, assignDate:'2026-05-20', member:'Joel Dcunha',        type:'Backend',    broker:'Hero/Paytm',   title:'National Premium mismatch issue, Hero Checksum, Paytm prod observation', status:'In Progress', dueTime:'', pct:0,   notes:'' },
-  { id:9, assignDate:'2026-05-14', member:'Nikhil Yelgaonkar',  type:'AU Backend', broker:'AU',           title:'AU Observation\n1. Failed Renewal implementation along with Dashboard Team\n2. Git No-532676 - Prod AU sanity 714 - Renewal Sanity', status:'In Progress', dueTime:'', pct:0,   notes:'' },
-  { id:10,assignDate:'2026-05-14', member:'Ahmed Raza Idrisi',  type:'AU Backend', broker:'AU',           title:'System Payment Setup',                    status:'On Leave',   dueTime:'', pct:0,   notes:'cancel payment changes' },
-  { id:11,assignDate:'2026-05-14', member:'Gouresh Baraskar',   type:'Backend',    broker:'All Brokers',  title:'Production support for all brokers',      status:'In Progress', dueTime:'', pct:0,   notes:'' },
-  { id:12,assignDate:'2026-05-16', member:'Pradeep Parihar',    type:'Backend',    broker:'TATA',         title:'TATA Renewal Upscale and Down Scale changes provided by IC', status:'In Progress', dueTime:'', pct:0,   notes:'' },
-  { id:13,assignDate:'2026-05-20', member:'Pradeep Parihar',    type:'Backend',    broker:'SBI',          title:'Fixing GSTIN issue for SBI GCV',          status:'In Progress', dueTime:'', pct:0,   notes:'' },
-  { id:14,assignDate:'2026-05-20', member:'Pradeep Parihar',    type:'Backend',    broker:'Shriram',      title:'BH series implementation for Shriram along with new PG changes on UAT', status:'In Progress', dueTime:'', pct:0,   notes:'' },
-];
-
 // ─── LOCAL STORAGE CONTROLLERS ───────────────────────────────────────────────
 let tasks = JSON.parse(localStorage.getItem('dev_tasks_data'));
-if (!tasks || tasks.length === 0) {
-  tasks = initialTasks;
+if (!tasks) {
+  tasks = [];
   localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
 }
 
-let nextId = parseInt(localStorage.getItem('dev_tasks_next_id')) || 15;
+let nextId = parseInt(localStorage.getItem('dev_tasks_next_id')) || 1;
 let sortCol = 'assignDate', sortDir = 1;
 let editingId = null;
+
+let currentRole = localStorage.getItem('dev_tasks_role') || 'Admin';
 
 function saveToLocalStorage() {
   localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
   localStorage.setItem('dev_tasks_next_id', nextId);
+}
+
+// ─── ACCESS CONTROL INTERFACES ───────────────────────────────────────────────
+function changeUserRole(newRole) {
+  currentRole = newRole;
+  localStorage.setItem('dev_tasks_role', newRole);
+  
+  document.body.className = '';
+  document.body.classList.add('role-' + newRole.toLowerCase());
+  
+  renderTable();
+  toast(`Switched workspace role to: ${newRole}`, '🔑');
 }
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
@@ -554,6 +585,7 @@ function toast(msg, type='✅') {
 
 // ─── CLONE FEATURE ───────────────────────────────────────────────────────────
 function cloneTask(id) {
+  if (currentRole === 'Viewer' || currentRole === 'Manager') return;
   const sourceTask = tasks.find(x => x.id === id);
   if (!sourceTask) return;
 
@@ -571,21 +603,21 @@ function cloneTask(id) {
   toast('Task cloned successfully! 🎉', '⧉');
 }
 
-// ─── STATS ───────────────────────────────────────────────────────────────────
+// ─── STATS (FIXED METRICS ENGINE) ────────────────────────────────────────────
 function renderStats() {
   const total = tasks.length;
   const inProg = tasks.filter(t=>t.status==='In Progress').length;
   const done = tasks.filter(t=>t.status==='Done').length;
-  const blocked = tasks.filter(t=>t.status==='Blocked').length;
   const onHold = tasks.filter(t=>t.status==='On Hold').length;
   const raiseIC = tasks.filter(t=>t.status==='Raise to IC').length;
   const raiseBrk = tasks.filter(t=>t.status==='Raise to Broker').length;
-  const avgPct = total ? Math.round(tasks.reduce((s,t)=>s+t.pct,0)/total) : 0;
+  const avgPct = total ? Math.round(tasks.reduce((s,t)=>s+(parseInt(t.pct)||0),0)/total) : 0;
+  
+  // Replaced Blocked with Raise to Broker card layout requested
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Total Tasks</div><div class="stat-value blue">${total}</div></div>
     <div class="stat-card"><div class="stat-label">In Progress</div><div class="stat-value purple">${inProg}</div></div>
     <div class="stat-card"><div class="stat-label">Done</div><div class="stat-value green">${done}</div></div>
-    <div class="stat-card"><div class="stat-label">Blocked</div><div class="stat-value orange">${blocked}</div></div>
     <div class="stat-card"><div class="stat-label">On Hold</div><div class="stat-value" style="color:var(--onhold-text)">${onHold}</div></div>
     <div class="stat-card"><div class="stat-label">Raise to IC</div><div class="stat-value" style="color:var(--raise-ic-text)">${raiseIC}</div></div>
     <div class="stat-card"><div class="stat-label">Raise to Broker</div><div class="stat-value" style="color:var(--raise-broker-text)">${raiseBrk}</div></div>
@@ -596,7 +628,7 @@ function renderStats() {
 // ─── FILTERS ─────────────────────────────────────────────────────────────────
 function populateFilters() {
   const brokers = [...new Set(tasks.map(t=>t.broker).filter(Boolean))].sort();
-  const members = [...new Set(tasks.map(t=>t.member))].sort();
+  const members = [...new Set(tasks.map(t=>t.member).filter(Boolean))].sort();
   const fb = document.getElementById('filter-broker');
   const fm = document.getElementById('filter-member');
   const bv = fb.value, mv = fm.value;
@@ -634,9 +666,8 @@ function renderTable() {
   const fMember = document.getElementById('filter-member').value;
 
   let filtered = tasks.filter(t => {
-    const haystack = [t.member,t.title,t.broker,t.notes,t.type].join(' ').toLowerCase();
+    const haystack = [(t.member||''),(t.title||''),(t.broker||''),(t.notes||''),(t.type||'')].join(' ').toLowerCase();
     
-    // Evaluate Date Boundaries
     const matchesFrom = !fromDate || t.assignDate >= fromDate;
     const matchesTo = !toDate || t.assignDate <= toDate;
 
@@ -660,28 +691,39 @@ function renderTable() {
   const empty = document.getElementById('empty-state');
 
   if(!filtered.length) {
-    tbody.innerHTML=''; empty.style.display='block'; return;
+    tbody.innerHTML=''; empty.style.display='block'; renderStats(); return;
   }
   empty.style.display='none';
 
   tbody.innerHTML = filtered.map((t,i) => {
     const pctColor = getPctColor(t.pct);
-    const pctDisplay = t.pct > 0 ? `
-      <div class="progress-wrap">
-        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${t.pct}%;background:${pctColor}"></div></div>
-        <span class="pct-label" style="color:${pctColor}">${t.pct}%</span>
-      </div>` : `<span style="color:var(--text-dim);font-size:12px">—</span>`;
+    
+    let pctDisplay = '';
+    if (currentRole === 'Admin' || currentRole === 'Manager') {
+       pctDisplay = `
+        <div class="progress-wrap editable-pct" onclick="editCell(${t.id}, 'pct', this)">
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${t.pct}%;background:${pctColor}"></div></div>
+          <span class="pct-label" style="color:${pctColor}">${t.pct}%</span>
+        </div>`;
+    } else {
+       pctDisplay = `
+        <div class="progress-wrap">
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${t.pct}%;background:${pctColor}"></div></div>
+          <span class="pct-label" style="color:${pctColor}">${t.pct}%</span>
+        </div>`;
+    }
 
     const rowDoneClass = t.status === 'Done' ? 'task-done-row' : '';
+    const isStatusDisabled = currentRole === 'Viewer' ? 'disabled' : '';
 
     return `<tr data-id="${t.id}" class="${rowDoneClass}" style="animation-delay:${i*0.03}s">
-      <td class="date editable" onclick="editCell(${t.id},'assignDate',this)">${fmtDate(t.assignDate)}</td>
-      <td class="member">${t.member}</td>
+      <td class="date editable" onclick="if(currentRole==='Admin')editCell(${t.id},'assignDate',this)">${fmtDate(t.assignDate)}</td>
+      <td class="member">${t.member||'<span style="color:var(--text-dim)">—</span>'}</td>
       <td><span class="type-tag ${typeClass(t.type)}">${typeLabel(t.type)}</span></td>
-      <td class="editable" onclick="editCell(${t.id},'broker',this)">${t.broker ? `<span class="broker-tag">🏢 ${t.broker}</span>` : '<span style="color:var(--text-dim);font-size:12px">—</span>'}</td>
-      <td class="task-title editable" onclick="editCell(${t.id},'title',this)" style="white-space:pre-line">${t.title||'<span style="color:var(--text-dim)">—</span>'}</td>
+      <td class="editable" onclick="if(currentRole==='Admin')editCell(${t.id},'broker',this)">${t.broker ? `<span class="broker-tag">🏢 ${t.broker}</span>` : '<span style="color:var(--text-dim);font-size:12px">—</span>'}</td>
+      <td class="task-title editable" onclick="if(currentRole==='Admin')editCell(${t.id},'title',this)" style="white-space:pre-line">${t.title||'<span style="color:var(--text-dim)">—</span>'}</td>
       <td>
-        <select class="badge ${statusClass(t.status)}" onchange="updateStatus(${t.id},this.value)" style="border:none;background:inherit;color:inherit;font:inherit;cursor:pointer;padding:4px 8px;border-radius:20px;outline:none;">
+        <select class="badge ${statusClass(t.status)}" ${isStatusDisabled} onchange="updateStatus(${t.id},this.value)" style="border:none;background:inherit;color:inherit;font:inherit;cursor:pointer;padding:4px 8px;border-radius:20px;outline:none;">
           <option ${t.status==='In Progress'?'selected':''}>In Progress</option>
           <option ${t.status==='Done'?'selected':''}>Done</option>
           <option ${t.status==='Blocked'?'selected':''}>Blocked</option>
@@ -693,7 +735,7 @@ function renderTable() {
       </td>
       <td class="date">${t.dueTime ? fmtDate(t.dueTime) : '<span style="color:var(--text-dim)">—</span>'}</td>
       <td>${pctDisplay}</td>
-      <td class="notes editable" onclick="editCell(${t.id},'notes',this)">${t.notes||'<span style="color:var(--text-dim)">—</span>'}</td>
+      <td class="notes editable" onclick="if(currentRole==='Admin')editCell(${t.id},'notes',this)">${t.notes||'<span style="color:var(--text-dim)">—</span>'}</td>
       <td>
         <div class="row-actions">
           <button class="action-btn edit" onclick="openEditModal(${t.id})" title="Edit">✎</button>
@@ -710,6 +752,9 @@ function renderTable() {
 
 // ─── INLINE CELL EDIT ────────────────────────────────────────────────────────
 function editCell(id, field, cell) {
+  if(field !== 'pct' && currentRole !== 'Admin') return;
+  if(field === 'pct' && currentRole === 'Viewer') return;
+  
   if(cell.querySelector('input,textarea')) return;
   const t = tasks.find(x=>x.id===id);
   const val = t[field]||'';
@@ -717,12 +762,24 @@ function editCell(id, field, cell) {
   const el = document.createElement(isMulti?'textarea':'input');
   el.className='inline-edit';
   el.value = val;
+  if(field==='pct') { el.type = 'number'; el.min = 0; el.max = 100; }
   if(isMulti) { el.rows=3; el.style.minHeight='60px'; }
   cell.innerHTML='';
   cell.appendChild(el);
   el.focus();
   const save = () => {
-    t[field] = el.value.trim();
+    let parsedVal = el.value.trim();
+    if(field==='pct') {
+       parsedVal = parseInt(parsedVal) || 0;
+       if(parsedVal > 100) parsedVal = 100;
+       if(parsedVal < 0) parsedVal = 0;
+    }
+    t[field] = parsedVal;
+    
+    if(field==='pct' && parsedVal === 100) {
+       t.status = 'Done';
+    }
+    
     saveToLocalStorage();
     renderTable();
     toast('Cell updated');
@@ -733,6 +790,7 @@ function editCell(id, field, cell) {
 
 // ─── STATUS INLINE ───────────────────────────────────────────────────────────
 function updateStatus(id, val) {
+  if (currentRole === 'Viewer') return;
   const t = tasks.find(x=>x.id===id);
   t.status = val;
   if (val === 'Done') {
@@ -745,6 +803,7 @@ function updateStatus(id, val) {
 
 // ─── DELETE ──────────────────────────────────────────────────────────────────
 function deleteTask(id) {
+  if (currentRole !== 'Admin') return;
   if(!confirm('Delete this task?')) return;
   tasks = tasks.filter(t=>t.id!==id);
   saveToLocalStorage();
@@ -754,6 +813,7 @@ function deleteTask(id) {
 
 // ─── MODAL ───────────────────────────────────────────────────────────────────
 function openAddModal() {
+  if (currentRole !== 'Admin') return;
   editingId = null;
   document.getElementById('modal-title').textContent = 'Add New Task';
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
@@ -769,6 +829,7 @@ function openAddModal() {
 }
 
 function openEditModal(id) {
+  if (currentRole !== 'Admin') return;
   editingId = id;
   const t = tasks.find(x=>x.id===id);
   document.getElementById('modal-title').textContent = 'Edit Task';
@@ -789,6 +850,7 @@ function closeModal() {
 }
 
 function saveTask() {
+  if (currentRole !== 'Admin') return;
   const data = {
     assignDate: document.getElementById('f-date').value,
     member: document.getElementById('f-member').value.trim(),
@@ -830,7 +892,7 @@ function getFilteredTasks() {
   const fBroker = document.getElementById('filter-broker').value;
   const fMember = document.getElementById('filter-member').value;
   return tasks.filter(t => {
-    const hay = [t.member,t.title,t.broker,t.notes,t.type].join(' ').toLowerCase();
+    const hay = [(t.member||''),(t.title||''),(t.broker||''),(t.notes||''),(t.type||'')].join(' ').toLowerCase();
     const matchesFrom = !fromDate || t.assignDate >= fromDate;
     const matchesTo = !toDate || t.assignDate <= toDate;
 
@@ -898,6 +960,10 @@ document.getElementById('modal-overlay').addEventListener('click', e => {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+document.getElementById('app-user-role').value = currentRole;
+document.body.classList.add('role-' + currentRole.toLowerCase());
+
 renderStats();
 populateFilters();
 renderTable();
