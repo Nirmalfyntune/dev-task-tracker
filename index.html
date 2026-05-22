@@ -382,7 +382,7 @@
     </div>
   </div>
   <div class="topbar-right">
-    <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="btn btn-ghost" onclick="exportExcel()">⬇ Export Excel</button>
     <button class="btn btn-primary" onclick="openAddModal()">＋ Add Task</button>
   </div>
 </div>
@@ -771,16 +771,90 @@ function saveTask() {
   renderTable();
 }
 
-// ─── EXPORT CSV ──────────────────────────────────────────────────────────────
-function exportCSV() {
-  const headers = ['Assign Date','Team Member','Type','Broker','Task Title','Status','Due Date','% Done','Notes'];
-  const rows = tasks.map(t => [fmtDate(t.assignDate),t.member,t.type,t.broker,`"${t.title.replace(/"/g,'""')}"`,t.status,fmtDate(t.dueTime),t.pct,t.notes]);
-  const csv = [headers,...rows].map(r=>r.join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv,' + encodeURIComponent(csv);
-  a.download = 'dev-tasks.csv';
+// ─── EXPORT EXCEL ────────────────────────────────────────────────────────────
+function getFilteredTasks() {
+  const search  = document.getElementById('search-input').value.toLowerCase();
+  const fStatus = document.getElementById('filter-status').value;
+  const fType   = document.getElementById('filter-type').value;
+  const fBroker = document.getElementById('filter-broker').value;
+  const fMember = document.getElementById('filter-member').value;
+  return tasks.filter(t => {
+    const hay = [t.member,t.title,t.broker,t.notes,t.type].join(' ').toLowerCase();
+    return (!search || hay.includes(search))
+      && (!fStatus || t.status===fStatus)
+      && (!fType   || t.type===fType)
+      && (!fBroker || t.broker===fBroker)
+      && (!fMember || t.member===fMember);
+  });
+}
+
+function exportExcel() {
+  const filtered = getFilteredTasks();
+  if (!filtered.length) { toast('No tasks to export', '⚠️'); return; }
+
+  const headers = ['Assign Date','Team Member','Type','Broker Name','Task Title','Status','Due Date','% Done','Notes'];
+
+  // Build HTML table which Excel can open natively
+  let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:x="urn:schemas-microsoft-com:office:excel"
+    xmlns="http://www.w3.org/TR/REC-html40">
+  <head><meta charset="UTF-8">
+  <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
+  <x:ExcelWorksheet><x:Name>Dev Tasks</x:Name>
+  <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+  </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+  </head><body><table border="1">`;
+
+  // Header row
+  html += '<tr>' + headers.map(h =>
+    `<th style="background:#2563eb;color:#fff;font-weight:bold;padding:8px 12px;white-space:nowrap;">${h}</th>`
+  ).join('') + '</tr>';
+
+  // Status colors for Excel
+  const statusColors = {
+    'In Progress':     '#dbeafe',
+    'Done':            '#dcfce7',
+    'On Leave':        '#ffedd5',
+    'Blocked':         '#fee2e2',
+    'On Hold':         '#fef9c3',
+    'Raise to IC':     '#ede9fe',
+    'Raise to Broker': '#ccfbf1',
+  };
+
+  // Data rows
+  filtered.forEach((t, i) => {
+    const bg = i % 2 === 0 ? '#ffffff' : '#f8fafc';
+    const sBg = statusColors[t.status] || '#ffffff';
+    html += `<tr>
+      <td style="background:${bg};padding:6px 10px;">${fmtDate(t.assignDate)}</td>
+      <td style="background:${bg};padding:6px 10px;font-weight:bold;">${t.member}</td>
+      <td style="background:${bg};padding:6px 10px;">${t.type}</td>
+      <td style="background:${bg};padding:6px 10px;">${t.broker}</td>
+      <td style="background:${bg};padding:6px 10px;">${t.title.replace(/\n/g,' | ')}</td>
+      <td style="background:${sBg};padding:6px 10px;font-weight:bold;">${t.status}</td>
+      <td style="background:${bg};padding:6px 10px;">${fmtDate(t.dueTime)}</td>
+      <td style="background:${bg};padding:6px 10px;text-align:center;">${t.pct}%</td>
+      <td style="background:${bg};padding:6px 10px;">${t.notes}</td>
+    </tr>`;
+  });
+
+  html += '</table></body></html>';
+
+  const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const now  = new Date().toLocaleDateString('en-IN').replace(/\//g,'-');
+
+  // File name reflects active filters
+  const fStatus = document.getElementById('filter-status').value;
+  const fMember = document.getElementById('filter-member').value;
+  const fBroker = document.getElementById('filter-broker').value;
+  const suffix  = [fStatus, fMember, fBroker].filter(Boolean).join('_') || 'All';
+  a.href = url;
+  a.download = `DevTasks_${suffix}_${now}.xls`;
   a.click();
-  toast('CSV exported 📄');
+  URL.revokeObjectURL(url);
+  toast(`Exported ${filtered.length} task(s) to Excel 📊`);
 }
 
 // ─── KEYBOARD ────────────────────────────────────────────────────────────────
