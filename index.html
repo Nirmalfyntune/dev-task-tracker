@@ -31,6 +31,12 @@
     --leave-text: #f0883e;
     --blocked-bg: rgba(248,81,73,0.13);
     --blocked-text: #f85149;
+    --onhold-bg: rgba(210,153,34,0.13);
+    --onhold-text: #d29922;
+    --raise-ic-bg: rgba(139,92,246,0.13);
+    --raise-ic-text: #a78bfa;
+    --raise-broker-bg: rgba(20,184,166,0.13);
+    --raise-broker-text: #2dd4bf;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -215,6 +221,12 @@
   .badge.on-leave .badge-dot { background: var(--leave-text); }
   .badge.blocked { background: var(--blocked-bg); color: var(--blocked-text); }
   .badge.blocked .badge-dot { background: var(--blocked-text); box-shadow: 0 0 6px var(--blocked-text); }
+  .badge.on-hold { background: var(--onhold-bg); color: var(--onhold-text); }
+  .badge.on-hold .badge-dot { background: var(--onhold-text); }
+  .badge.raise-ic { background: var(--raise-ic-bg); color: var(--raise-ic-text); }
+  .badge.raise-ic .badge-dot { background: var(--raise-ic-text); box-shadow: 0 0 6px var(--raise-ic-text); animation: pulse 1.5s infinite; }
+  .badge.raise-broker { background: var(--raise-broker-bg); color: var(--raise-broker-text); }
+  .badge.raise-broker .badge-dot { background: var(--raise-broker-text); box-shadow: 0 0 6px var(--raise-broker-text); animation: pulse 1.5s infinite; }
   @keyframes pulse {
     0%,100% { opacity: 1; } 50% { opacity: 0.4; }
   }
@@ -390,6 +402,9 @@
     <option value="Done">Done</option>
     <option value="On Leave">On Leave</option>
     <option value="Blocked">Blocked</option>
+    <option value="On Hold">On Hold</option>
+    <option value="Raise to IC">Raise to IC</option>
+    <option value="Raise to Broker">Raise to Broker</option>
   </select>
   <select class="filter-select" id="filter-type" onchange="renderTable()">
     <option value="">All Types</option>
@@ -467,6 +482,9 @@
           <option>Done</option>
           <option>Blocked</option>
           <option>On Leave</option>
+          <option>On Hold</option>
+          <option>Raise to IC</option>
+          <option>Raise to Broker</option>
         </select>
       </div>
       <div class="form-group">
@@ -516,7 +534,7 @@ let editingId = null;
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
 const getPctColor = p => p >= 80 ? '#3fb950' : p >= 40 ? '#d29922' : '#f0883e';
-const statusClass = s => ({ 'In Progress':'in-progress','Done':'done','On Leave':'on-leave','Blocked':'blocked' }[s] || 'in-progress');
+const statusClass = s => ({ 'In Progress':'in-progress','Done':'done','On Leave':'on-leave','Blocked':'blocked','On Hold':'on-hold','Raise to IC':'raise-ic','Raise to Broker':'raise-broker' }[s] || 'in-progress');
 const typeClass = t => ({ 'Backend':'type-be','AU Backend':'type-au','Frontend':'type-fe' }[t] || 'type-be');
 const typeLabel = t => ({ 'Backend':'⚙ Backend','AU Backend':'🔷 AU Backend','Frontend':'🖥 Frontend' }[t] || t);
 const fmtDate = d => d ? d.split('-').reverse().join('.') : '';
@@ -536,12 +554,18 @@ function renderStats() {
   const inProg = tasks.filter(t=>t.status==='In Progress').length;
   const done = tasks.filter(t=>t.status==='Done').length;
   const blocked = tasks.filter(t=>t.status==='Blocked').length;
+  const onHold = tasks.filter(t=>t.status==='On Hold').length;
+  const raiseIC = tasks.filter(t=>t.status==='Raise to IC').length;
+  const raiseBrk = tasks.filter(t=>t.status==='Raise to Broker').length;
   const avgPct = total ? Math.round(tasks.reduce((s,t)=>s+t.pct,0)/total) : 0;
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Total Tasks</div><div class="stat-value blue">${total}</div></div>
     <div class="stat-card"><div class="stat-label">In Progress</div><div class="stat-value purple">${inProg}</div></div>
     <div class="stat-card"><div class="stat-label">Done</div><div class="stat-value green">${done}</div></div>
     <div class="stat-card"><div class="stat-label">Blocked</div><div class="stat-value orange">${blocked}</div></div>
+    <div class="stat-card"><div class="stat-label">On Hold</div><div class="stat-value" style="color:var(--onhold-text)">${onHold}</div></div>
+    <div class="stat-card"><div class="stat-label">Raise to IC</div><div class="stat-value" style="color:var(--raise-ic-text)">${raiseIC}</div></div>
+    <div class="stat-card"><div class="stat-label">Raise to Broker</div><div class="stat-value" style="color:var(--raise-broker-text)">${raiseBrk}</div></div>
     <div class="stat-card"><div class="stat-label">Avg % Done</div><div class="stat-value" style="color:#d29922">${avgPct}%</div></div>
   `;
 }
@@ -627,6 +651,9 @@ function renderTable() {
           <option ${t.status==='Done'?'selected':''}>Done</option>
           <option ${t.status==='Blocked'?'selected':''}>Blocked</option>
           <option ${t.status==='On Leave'?'selected':''}>On Leave</option>
+          <option ${t.status==='On Hold'?'selected':''}>On Hold</option>
+          <option ${t.status==='Raise to IC'?'selected':''}>Raise to IC</option>
+          <option ${t.status==='Raise to Broker'?'selected':''}>Raise to Broker</option>
         </select>
       </td>
       <td class="date">${t.dueTime ? fmtDate(t.dueTime) : '<span style="color:var(--text-dim)">—</span>'}</td>
