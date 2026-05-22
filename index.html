@@ -24,6 +24,8 @@
     --purple: #bc8cff;
     --teal: #39d353;
     --subtask-bg: #10141b;
+    --todo-bg: rgba(139, 148, 158, 0.15);
+    --todo-text: #8b949e;
     --in-progress-bg: rgba(37,99,235,0.13);
     --in-progress-text: #93c5fd;
     --done-bg: rgba(63,185,80,0.13);
@@ -243,6 +245,7 @@
   /* SUBTASK NESTED ROW GRID CONTAINER */
   .subtask-nested-row { display: none; background: var(--subtask-bg); border-bottom: 1px solid var(--border); }
   .subtask-wrapper { padding: 14px 24px 20px 48px; }
+  .subtask-wrapper { padding: 14px 24px 20px 48px; }
   .subtask-header-title {
     font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase;
     color: var(--purple); letter-spacing: 0.5px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
@@ -255,12 +258,13 @@
   .subtask-table td { padding: 8px 10px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
   .subtask-table tr:last-child td { border-bottom: none; }
 
-  /* STATUS BADGE */
+  /* STATUS BADGE STYLE TRACKS */
   .badge {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
     white-space: nowrap;
   }
+  .badge.to-do { background: var(--todo-bg); color: var(--todo-text); }
   .badge.in-progress { background: var(--in-progress-bg); color: var(--in-progress-text); }
   .badge.done { background: var(--done-bg); color: var(--done-text); }
   .badge.on-leave { background: var(--leave-bg); color: var(--leave-text); }
@@ -408,6 +412,7 @@
   </div>
   <select class="filter-select" id="filter-status" onchange="renderTable()">
     <option value="">All Statuses</option>
+    <option value="To Do">To Do</option>
     <option value="In Progress">In Progress</option>
     <option value="Done">Done</option>
     <option value="On Leave">On Leave</option>
@@ -494,6 +499,19 @@
         <textarea id="f-title" placeholder="Describe the main scope title…"></textarea>
       </div>
       <div class="form-group full">
+        <label>Status</label>
+        <select id="f-status">
+          <option>To Do</option>
+          <option>In Progress</option>
+          <option>Done</option>
+          <option>Blocked</option>
+          <option>On Leave</option>
+          <option>On Hold</option>
+          <option>Raise to IC</option>
+          <option>Raise to Broker</option>
+        </select>
+      </div>
+      <div class="form-group full">
         <label>Notes / Blockers</label>
         <input type="text" id="f-notes" placeholder="Global structural notes…"/>
       </div>
@@ -529,7 +547,7 @@
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-// ─── LOCAL STORAGE DATA CORNERSTONE ENGINE & AUTOMATED MIGRATION LAYER ────────
+// ─── LOCAL STORAGE DATA ENGINE ───────────────────────────────────────────────
 let tasks = JSON.parse(localStorage.getItem('dev_tasks_data')) || [];
 
 let updatedMigration = false;
@@ -548,7 +566,6 @@ tasks = tasks.map(t => {
     migrated = true;
   }
   
-  // Clean structure logic conversion tracks st.id smoothly
   t.subTasks.forEach(st => {
     if (st.subId && !st.id) {
       st.id = st.subId;
@@ -590,7 +607,7 @@ function changeUserRole(newRole) {
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
 const getPctColor = p => p >= 80 ? '#3fb950' : p >= 40 ? '#d29922' : '#f0883e';
-const statusClass = s => ({ 'In Progress':'in-progress','Done':'done','On Leave':'on-leave','Blocked':'blocked','On Hold':'on-hold','Raise to IC':'raise-ic','Raise to Broker':'raise-broker' }[s] || 'in-progress');
+const statusClass = s => ({ 'To Do':'to-do', 'In Progress':'in-progress','Done':'done','On Leave':'on-leave','Blocked':'blocked','On Hold':'on-hold','Raise to IC':'raise-ic','Raise to Broker':'raise-broker' }[s] || 'in-progress');
 const typeClass = t => ({ 'Backend':'type-be','AU Backend':'type-au','Frontend':'type-fe' }[t] || 'type-be');
 const typeLabel = t => ({ 'Backend':'⚙ Backend','AU Backend':'🔷 AU Backend','Frontend':'🖥 Frontend' }[t] || t);
 const fmtDate = d => d ? d.split('-').reverse().join('.') : '';
@@ -637,7 +654,7 @@ function cloneTask(id) {
     id: Math.floor(Math.random() * 1000000),
     title: st.title + ' (Clone)',
     member: st.member,
-    status: 'In Progress',
+    status: 'To Do',
     assignDate: new Date().toISOString().split('T')[0],
     completionDate: '',
     logs: [{ timestamp: new Date().toLocaleString('en-IN'), description: 'Subtask cloned initialized.' }]
@@ -646,7 +663,7 @@ function cloneTask(id) {
   const cloned = {
     ...sourceTask,
     id: nextId++,
-    status: 'In Progress',
+    status: 'To Do',
     pct: 0,
     assignDate: new Date().toISOString().split('T')[0],
     completionDate: '',
@@ -802,6 +819,7 @@ function renderTable() {
         <td class="task-title editable" onclick="if(currentRole==='Admin')editCell(${t.id},'title',this)">${t.title||'<span style="color:var(--text-dim)">—</span>'}</td>
         <td>
           <select class="badge ${statusClass(t.status)}" ${isStatusDisabled} onchange="updateMainStatusExplicit(${t.id},this.value)" style="border:none;background:inherit;color:inherit;font:inherit;cursor:pointer;padding:4px 8px;border-radius:20px;outline:none;">
+            <option ${t.status==='To Do'?'selected':''}>To Do</option>
             <option ${t.status==='In Progress'?'selected':''}>In Progress</option>
             <option ${t.status==='Done'?'selected':''}>Done</option>
             <option ${t.status==='Blocked'?'selected':''}>Blocked</option>
@@ -859,6 +877,7 @@ function renderTable() {
                       <td style="color:#3fb950; font-size:11px; font-weight:600;">${fmtDate(st.completionDate) || '<span style="color:var(--text-dim)">—</span>'}</td>
                       <td>
                         <select class="badge ${statusClass(st.status)}" ${viewSelectDisabled} onchange="updateSubTaskStatus(${t.id}, ${st.id}, this.value)" style="border:none;background:transparent;color:inherit;font-size:11px;font-weight:600;cursor:pointer;outline:none;">
+                          <option ${st.status==='To Do'?'selected':''}>To Do</option>
                           <option ${st.status==='In Progress'?'selected':''}>In Progress</option>
                           <option ${st.status==='Done'?'selected':''}>Done</option>
                           <option ${st.status==='Blocked'?'selected':''}>Blocked</option>
@@ -975,7 +994,7 @@ function deleteTask(id) {
 }
 
 // ─── DYNAMIC FORM MODAL SUB-GRID BLUEPRINTS GENERATOR ───────────────────────
-function addBlankSubtaskFormRow(title = '', member = '', status = 'In Progress', assignDate = '', completionDate = '', id = '') {
+function addBlankSubtaskFormRow(title = '', member = '', status = 'To Do', assignDate = '', completionDate = '', id = '') {
   const container = document.getElementById('modal-subtasks-container');
   const subId = id ? parseInt(id) : Math.floor(Math.random() * 1000000);
   const assignVal = assignDate || new Date().toISOString().split('T')[0];
@@ -989,6 +1008,7 @@ function addBlankSubtaskFormRow(title = '', member = '', status = 'In Progress',
     <input type="date" class="sub-f-assign-date" style="flex:1; font-size:11px;" value="${assignVal}" />
     <input type="date" class="sub-f-completion-date" style="flex:1; font-size:11px;" value="${completionDate}" placeholder="Complete Date" />
     <select class="sub-f-status" style="width:110px;">
+      <option ${status==='To Do'?'selected':''}>To Do</option>
       <option ${status==='In Progress'?'selected':''}>In Progress</option>
       <option ${status==='Done'?'selected':''}>Done</option>
       <option ${status==='Blocked'?'selected':''}>Blocked</option>
@@ -1018,6 +1038,7 @@ function openAddModal() {
   document.getElementById('f-broker').value = '';
   document.getElementById('f-title').value = '';
   document.getElementById('f-due').value = '';
+  document.getElementById('f-status').value = 'To Do';
   document.getElementById('f-notes').value = '';
   document.getElementById('modal-subtasks-container').innerHTML = '';
   
@@ -1037,6 +1058,7 @@ function openEditModal(id) {
   document.getElementById('f-broker').value = t.broker || '';
   document.getElementById('f-title').value = t.title || '';
   document.getElementById('f-due').value = t.dueTime || '';
+  document.getElementById('f-status').value = t.status || 'To Do';
   document.getElementById('f-notes').value = t.notes || '';
   
   const container = document.getElementById('modal-subtasks-container');
@@ -1085,7 +1107,6 @@ function saveTask() {
       if (oldSub && oldSub.logs) existingLogs = oldSub.logs;
     }
 
-    // Connected exact object keys setup
     compiledSubtasks.push({ id: subId, title, member, status, assignDate, completionDate, logs: existingLogs });
   });
 
@@ -1099,7 +1120,7 @@ function saveTask() {
     dueTime: document.getElementById('f-due').value,
     notes: document.getElementById('f-notes').value.trim(),
     subTasks: compiledSubtasks,
-    status: editingId ? oldTaskRef.status : 'In Progress',
+    status: document.getElementById('f-status').value,
     pct: editingId ? oldTaskRef.pct : 0
   };
 
@@ -1113,7 +1134,6 @@ function saveTask() {
     logActivity(freshBlock, 'Master database entry task initialization.');
     tasks.push(freshBlock);
     
-    // Auto-open target folder on screen upon submission saving
     expandedTaskIds.add(createdId);
     toast('Task stack deployed 🎉');
   }
