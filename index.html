@@ -23,6 +23,7 @@
     --red: #f85149;
     --purple: #bc8cff;
     --teal: #39d353;
+    --subtask-bg: #10141b;
     --in-progress-bg: rgba(37,99,235,0.13);
     --in-progress-text: #93c5fd;
     --done-bg: rgba(63,185,80,0.13);
@@ -109,6 +110,7 @@
     background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border);
   }
   .btn-ghost:hover { background: var(--border); color: var(--text); }
+  .btn-sm { padding: 4px 10px; font-size: 11px; border-radius: 6px; }
 
   /* STATS ROW */
   .stats-row {
@@ -156,7 +158,6 @@
   .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
   .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
   
-  /* DATE FILTER BLOCKS */
   .date-filter-group {
     display: flex; align-items: center; gap: 6px; background: var(--surface);
     border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px;
@@ -209,23 +210,15 @@
   thead th .sort-icon { font-size: 10px; opacity: 0.5; transition: opacity 0.2s; }
   thead th.sorted .sort-icon { opacity: 1; color: var(--accent2); }
 
-  tbody tr {
+  tbody tr.main-task-row {
     border-bottom: 1px solid var(--border);
     transition: background 0.15s, transform 0.15s, border-left 0.15s;
-    animation: fadeInRow 0.3s ease both;
   }
-  @keyframes fadeInRow {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  tbody tr:hover { background: rgba(37,99,235,0.06); transform: scale(1.001); }
+  tbody tr.main-task-row:hover { background: rgba(37,99,235,0.04); }
   
   tbody tr.task-done-row {
-    background: rgba(63, 185, 80, 0.08);
+    background: rgba(63, 185, 80, 0.04);
     border-left: 4px solid var(--green);
-  }
-  tbody tr.task-done-row:hover {
-    background: rgba(63, 185, 80, 0.13);
   }
 
   td {
@@ -238,6 +231,29 @@
   td.task-title { color: var(--text); max-width: 240px; line-height: 1.5; }
   td.pct { font-family: 'Syne', sans-serif; font-weight: 700; text-align: center; }
   td.notes { color: var(--text-muted); font-size: 12px; max-width: 160px; }
+
+  /* EXPAND ARROW */
+  .expand-btn {
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; color: var(--text-muted); transition: transform 0.2s, color 0.2s;
+    font-size: 10px; margin-right: 6px;
+  }
+  .expand-btn.expanded { transform: rotate(90deg); color: var(--accent2); }
+
+  /* SUBTASK NESTED ROW GRID CONTAINER */
+  .subtask-nested-row { display: none; background: var(--subtask-bg); border-bottom: 1px solid var(--border); }
+  .subtask-wrapper { padding: 14px 24px 20px 48px; }
+  .subtask-header-title {
+    font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    color: var(--purple); letter-spacing: 0.5px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .subtask-table { width: 100%; border-collapse: collapse; min-width: unset !important; margin-top: 6px; }
+  .subtask-table th {
+    background: transparent; border-bottom: 1px solid var(--border); padding: 8px 10px;
+    color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-family: 'DM Sans', sans-serif; font-weight: 600;
+  }
+  .subtask-table td { padding: 8px 10px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .subtask-table tr:last-child td { border-bottom: none; }
 
   /* STATUS BADGE */
   .badge {
@@ -258,44 +274,24 @@
   .progress-bar-bg {
     flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; min-width: 50px;
   }
-  .progress-bar-fill {
-    height: 100%; border-radius: 3px;
-    transition: width 0.6s ease;
-  }
+  .progress-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
   .pct-label { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; min-width: 32px; text-align: right; }
 
-  /* BROKER TAG */
   .broker-tag {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600;
-    background: rgba(188,140,255,0.12); color: var(--purple);
-    border: 1px solid rgba(188,140,255,0.2);
-    white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600;
+    background: rgba(188,140,255,0.12); color: var(--purple); border: 1px solid rgba(188,140,255,0.2); white-space: nowrap;
   }
 
-  /* TYPE TAG */
-  .type-tag {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 500;
-  }
+  .type-tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 500; }
   .type-fe { background: rgba(57,211,83,0.1); color: var(--teal); border: 1px solid rgba(57,211,83,0.2); }
   .type-be { background: rgba(37,99,235,0.1); color: var(--accent2); border: 1px solid rgba(37,99,235,0.2); }
   .type-au { background: rgba(188,140,255,0.1); color: var(--purple); border: 1px solid rgba(188,140,255,0.2); }
 
-  /* EDITABLE CELL */
-  .editable {
-    position: relative; border-radius: 5px; padding: 2px 4px; margin: -2px -4px; transition: background 0.15s;
-  }
-  body.role-admin .editable, body.role-manager .editable-pct {
-    cursor: pointer;
-  }
+  .editable { position: relative; border-radius: 5px; padding: 2px 4px; margin: -2px -4px; transition: background 0.15s; }
+  body.role-admin .editable { cursor: pointer; }
   body.role-admin .editable:hover { background: rgba(255,255,255,0.06); }
   body.role-admin .editable:hover::after { content: '✎'; font-size: 10px; margin-left: 5px; color: var(--text-dim); }
   
-  body.role-manager .editable-pct:hover { background: rgba(255,255,255,0.06); }
-  body.role-manager .editable-pct:hover::after { content: '✎'; font-size: 10px; margin-left: 5px; color: var(--text-dim); }
-
-  /* INLINE EDIT INPUT */
   .inline-edit {
     background: var(--surface2); border: 1px solid var(--accent); border-radius: 5px; color: var(--text); font-size: 13px;
     font-family: 'DM Sans', sans-serif; padding: 4px 8px; width: 100%; outline: none; box-shadow: 0 0 0 3px var(--accent-glow);
@@ -307,7 +303,7 @@
   }
   .modal-overlay.open { display: flex; }
   .modal {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 32px; width: 560px; max-width: 95vw;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 32px; width: 620px; max-width: 95vw;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: modalIn 0.25s ease; max-height: 90vh; overflow-y: auto;
   }
   @keyframes modalIn {
@@ -330,23 +326,21 @@
   .form-group textarea { resize: vertical; min-height: 70px; }
   .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
 
+  /* SUBTASK FORM MANAGER SECTION */
+  .modal-subtasks-section { border-top: 1px solid var(--border); margin-top: 16px; padding-top: 16px; }
+  .modal-subtask-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+
   /* TOAST */
   .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 300; display: flex; flex-direction: column; gap: 8px; }
   .toast {
     background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; font-size: 13px; color: var(--text);
     animation: toastIn 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 8px;
   }
-  @keyframes toastIn {
-    from { opacity: 0; transform: translateX(40px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
 
-  /* EMPTY STATE */
   .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
   .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-state p { font-size: 14px; }
 
-  /* ROW ACTIONS */
   .row-actions { display: flex; gap: 6px; opacity: 0; transition: opacity 0.2s; }
   tbody tr:hover .row-actions { opacity: 1; }
   .action-btn {
@@ -361,39 +355,13 @@
   .action-btn.delete { background: rgba(248,81,73,0.12); color: var(--red); }
   .action-btn.delete:hover { background: rgba(248,81,73,0.25); }
 
-  /* ACTIVITY LOG UI TIMELINE STYLES */
-  .log-timeline {
-    display: flex; flex-direction: column; gap: 12px; margin-top: 14px;
-    max-height: 350px; overflow-y: auto; padding-right: 4px;
-  }
-  .log-item {
-    background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid #2dd4bf;
-    padding: 10px 12px; border-radius: 6px; font-size: 12px; line-height: 1.4;
-  }
-  .log-timestamp {
-    font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-family: 'Syne', sans-serif; font-weight: 600;
-  }
-  .log-text { color: var(--text); }
+  .log-timeline { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; max-height: 350px; overflow-y: auto; padding-right: 4px; }
+  .log-item { background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid #2dd4bf; padding: 10px 12px; border-radius: 6px; font-size: 12px; line-height: 1.4; }
+  .log-timestamp { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-family: 'Syne', sans-serif; font-weight: 600; }
 
-  /* ROLE-BASED CONDITIONAL DISPLAY RULES */
-  body.role-viewer .action-btn.delete,
-  body.role-viewer .action-btn.clone,
-  body.role-viewer .action-btn.edit,
-  body.role-viewer #btn-add-task,
-  body.role-manager .action-btn.delete,
-  body.role-manager .action-btn.clone,
-  body.role-manager .action-btn.edit,
-  body.role-manager #btn-add-task {
+  body.role-viewer .action-btn.delete, body.role-viewer .action-btn.clone, body.role-viewer .action-btn.edit, body.role-viewer #btn-add-task,
+  body.role-manager .action-btn.delete, body.role-manager .action-btn.clone, body.role-manager .action-btn.edit, body.role-manager #btn-add-task {
     display: none !important;
-  }
-
-  @media (max-width: 990px) {
-    .controls { gap: 8px; }
-  }
-  @media (max-width: 700px) {
-    .topbar, .stats-row, .controls, .table-wrapper { padding: 14px 12px; }
-    .stats-row { gap: 8px; }
-    .form-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -417,7 +385,6 @@
         <option value="Viewer">Viewer (Read-Only Mode)</option>
       </select>
     </div>
-
     <button class="btn btn-ghost" onclick="exportExcel()">⬇ Export Excel</button>
     <button class="btn btn-primary" id="btn-add-task" onclick="openAddModal()">＋ Add Task</button>
   </div>
@@ -428,9 +395,8 @@
 <div class="controls">
   <div class="search-box">
     <span class="search-icon">🔍</span>
-    <input type="text" id="search-input" placeholder="Search tasks, members, brokers…" oninput="renderTable()"/>
+    <input type="text" id="search-input" placeholder="Search main tasks, subtasks, members..." oninput="renderTable()"/>
   </div>
-  
   <div class="date-filter-group">
     <label>From</label>
     <input type="date" id="filter-from-date" onchange="renderTable()"/>
@@ -439,7 +405,6 @@
     <label>To</label>
     <input type="date" id="filter-to-date" onchange="renderTable()"/>
   </div>
-
   <select class="filter-select" id="filter-status" onchange="renderTable()">
     <option value="">All Statuses</option>
     <option value="In Progress">In Progress</option>
@@ -469,11 +434,13 @@
   <table id="task-table">
     <thead>
       <tr>
+        <th></th>
         <th onclick="sortBy('assignDate')"><div class="th-inner">Assign Date<span class="sort-icon">↕</span></div></th>
-        <th onclick="sortBy('member')"><div class="th-inner">Team Member<span class="sort-icon">↕</span></div></th>
+        <th onclick="sortBy('completionDate')"><div class="th-inner">Complete Date<span class="sort-icon">↕</span></div></th>
+        <th onclick="sortBy('member')"><div class="th-inner">Lead Member<span class="sort-icon">↕</span></div></th>
         <th onclick="sortBy('type')"><div class="th-inner">Type<span class="sort-icon">↕</span></div></th>
         <th onclick="sortBy('broker')"><div class="th-inner">Broker Name<span class="sort-icon">↕</span></div></th>
-        <th onclick="sortBy('title')"><div class="th-inner">Task Title<span class="sort-icon">↕</span></div></th>
+        <th onclick="sortBy('title')"><div class="th-inner">Task Title & Sub-tasks<span class="sort-icon">↕</span></div></th>
         <th onclick="sortBy('status')"><div class="th-inner">Status<span class="sort-icon">↕</span></div></th>
         <th onclick="sortBy('dueTime')"><div class="th-inner">Due Time<span class="sort-icon">↕</span></div></th>
         <th onclick="sortBy('pct')"><div class="th-inner">% Done<span class="sort-icon">↕</span></div></th>
@@ -485,7 +452,7 @@
   </table>
   <div id="empty-state" class="empty-state" style="display:none;">
     <div class="icon">🔍</div>
-    <p>No tasks match your filters.</p>
+    <p>No tasks match your active filters.</p>
   </div>
 </div>
 
@@ -498,7 +465,11 @@
         <input type="date" id="f-date"/>
       </div>
       <div class="form-group">
-        <label>Team Member</label>
+        <label>Complete Date</label>
+        <input type="date" id="f-completion-date"/>
+      </div>
+      <div class="form-group">
+        <label>Team Member Lead</label>
         <input type="text" id="f-member" placeholder="Full name"/>
       </div>
       <div class="form-group">
@@ -513,50 +484,41 @@
         <label>Broker Name</label>
         <input type="text" id="f-broker" placeholder="e.g. Hero Broker, Chola, SBI…"/>
       </div>
-      <div class="form-group full">
-        <label>Task Title</label>
-        <textarea id="f-title" placeholder="Describe the task…"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Status</label>
-        <select id="f-status">
-          <option>In Progress</option>
-          <option>Done</option>
-          <option>Blocked</option>
-          <option>On Leave</option>
-          <option>On Hold</option>
-          <option>Raise to IC</option>
-          <option>Raise to Broker</option>
-        </select>
-      </div>
       <div class="form-group">
         <label>Due Date</label>
         <input type="date" id="f-due"/>
       </div>
-      <div class="form-group">
-        <label>% Done (0–100)</label>
-        <input type="number" id="f-pct" min="0" max="100" placeholder="0"/>
+      <div class="form-group full">
+        <label>Task Title</label>
+        <textarea id="f-title" placeholder="Describe the main scope title…"></textarea>
       </div>
       <div class="form-group full">
         <label>Notes / Blockers</label>
-        <input type="text" id="f-notes" placeholder="Any blockers or notes…"/>
+        <input type="text" id="f-notes" placeholder="Global structural notes…"/>
       </div>
     </div>
+
+    <div class="modal-subtasks-section">
+      <div class="subtask-header-title">
+        <span>Nested Sub-Tasks Execution List</span>
+        <button class="btn btn-ghost btn-sm" style="color:var(--teal)" onclick="addBlankSubtaskFormRow()">＋ Add Subtask</button>
+      </div>
+      <div id="modal-subtasks-container"></div>
+    </div>
+
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveTask()">Save Task</button>
+      <button class="btn btn-primary" onclick="saveTask()">Save Task Structure</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="log-modal-overlay">
   <div class="modal" style="width: 480px;">
-    <h2>Task Activity History Log</h2>
+    <h2 id="log-modal-header-title">History Log</h2>
     <p id="log-modal-task-title" style="font-size: 13px; color: var(--text-muted); margin-top: -12px; margin-bottom: 12px; font-weight: 500;"></p>
     <hr style="border-color: var(--border); margin-bottom: 14px;">
-    
     <div class="log-timeline" id="log-modal-timeline"></div>
-    
     <div class="modal-footer" style="margin-top: 20px;">
       <button class="btn btn-ghost" onclick="closeLogModal()">Close View</button>
     </div>
@@ -566,18 +528,42 @@
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-// ─── LOCAL STORAGE CONTROLLERS ───────────────────────────────────────────────
-let tasks = JSON.parse(localStorage.getItem('dev_tasks_data'));
-if (!tasks) {
-  tasks = [];
+// ─── LOCAL STORAGE DATA CORNERSTONE ENGINE & AUTOMATED MIGRATION LAYER ────────
+let tasks = JSON.parse(localStorage.getItem('dev_tasks_data')) || [];
+
+// AUTO-MIGRATION CONVERTOR LAYER: Detects flat array files and structuralizes smoothly
+let updatedMigration = false;
+tasks = tasks.map(t => {
+  let migrated = false;
+  if (!t.subTasks) {
+    t.subTasks = [{
+      id: Math.floor(Math.random() * 1000000),
+      title: t.title || 'Base Deliverable Implementation',
+      member: t.member || 'Unassigned',
+      status: t.status || 'In Progress',
+      assignDate: t.assignDate || new Date().toISOString().split('T')[0],
+      completionDate: t.status === 'Done' ? new Date().toISOString().split('T')[0] : '',
+      logs: []
+    }];
+    migrated = true;
+  }
+  if (!t.hasOwnProperty('completionDate')) {
+    t.completionDate = t.status === 'Done' ? (t.dueTime || new Date().toISOString().split('T')[0]) : '';
+    migrated = true;
+  }
+  if (migrated) updatedMigration = true;
+  return t;
+});
+
+if (updatedMigration) {
   localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
 }
 
-let nextId = parseInt(localStorage.getItem('dev_tasks_next_id')) || 1;
+let nextId = parseInt(localStorage.getItem('dev_tasks_next_id')) || (tasks.length ? Math.max(...tasks.map(x=>x.id))+1 : 1);
 let sortCol = 'assignDate', sortDir = 1;
 let editingId = null;
-
 let currentRole = localStorage.getItem('dev_tasks_role') || 'Admin';
+let expandedTaskIds = new Set();
 
 function saveToLocalStorage() {
   localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
@@ -588,10 +574,8 @@ function saveToLocalStorage() {
 function changeUserRole(newRole) {
   currentRole = newRole;
   localStorage.setItem('dev_tasks_role', newRole);
-  
   document.body.className = '';
   document.body.classList.add('role-' + newRole.toLowerCase());
-  
   renderTable();
   toast(`Switched workspace role to: ${newRole}`, '🔑');
 }
@@ -612,41 +596,91 @@ function toast(msg, type='✅') {
   setTimeout(() => t.remove(), 3000);
 }
 
-// ─── LOG LAYER MUTATION CONTROLLER ───────────────────────────────────────────
-function logActivity(task, description) {
-  if (!task.logs) task.logs = [];
-  
+function logActivity(targetObj, description) {
+  if (!targetObj.logs) targetObj.logs = [];
   const timestamp = new Date().toLocaleString('en-IN', {
     day: '2-digit', month: '2-digit', year: 'numeric',
     hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
   });
-  
-  task.logs.unshift({ timestamp, description });
+  targetObj.logs.unshift({ timestamp, description });
 }
 
-// ─── CLONE FEATURE ───────────────────────────────────────────────────────────
+// ─── DYNAMIC SUBTASK RE-CALCULATION MATRICES ──────────────────────────────────
+function syncMainTaskRollups(mainTask) {
+  if (!mainTask.subTasks || mainTask.subTasks.length === 0) {
+    mainTask.pct = 0;
+    return;
+  }
+  const total = mainTask.subTasks.length;
+  const doneCount = mainTask.subTasks.filter(st => st.status === 'Done').length;
+  mainTask.pct = Math.round((doneCount / total) * 100);
+
+  // Status rollup mapping rules
+  if (doneCount === total) {
+    if(mainTask.status !== 'Done') {
+      mainTask.status = 'Done';
+      mainTask.completionDate = new Date().toISOString().split('T')[0];
+      logActivity(mainTask, `Status automatically set to "Done" as all nested sub-tasks are complete.`);
+    }
+  } else {
+    if(mainTask.status === 'Done') {
+      mainTask.status = 'In Progress';
+      mainTask.completionDate = '';
+      logActivity(mainTask, `Status broken out of "Done" back to "In Progress" due to sub-task adjustments.`);
+    }
+  }
+}
+
+// ─── TOGGLE COLLAPSIBLE ROW VISIBILITY ───────────────────────────────────────
+function toggleTaskExpand(id, element) {
+  const targetRow = document.getElementById(`subtask-row-${id}`);
+  if (expandedTaskIds.has(id)) {
+    expandedTaskIds.delete(id);
+    element.classList.remove('expanded');
+    if (targetRow) targetRow.style.display = 'none';
+  } else {
+    expandedTaskIds.add(id);
+    element.classList.add('expanded');
+    if (targetRow) targetRow.style.display = 'table-row';
+  }
+}
+
+// ─── CLONE CORE TASK WRAPPERS ────────────────────────────────────────────────
 function cloneTask(id) {
   if (currentRole === 'Viewer' || currentRole === 'Manager') return;
   const sourceTask = tasks.find(x => x.id === id);
   if (!sourceTask) return;
+
+  const clonedSubtasks = (sourceTask.subTasks || []).map(st => ({
+    id: Math.floor(Math.random() * 1000000),
+    title: st.title + ' (Clone)',
+    member: st.member,
+    status: 'In Progress',
+    assignDate: new Date().toISOString().split('T')[0],
+    completionDate: '',
+    logs: [{ timestamp: new Date().toLocaleString('en-IN'), description: 'Subtask cloned initialized.' }]
+  }));
 
   const cloned = {
     ...sourceTask,
     id: nextId++,
     status: 'In Progress',
     pct: 0,
-    title: sourceTask.title ? `${sourceTask.title} (Clone)` : 'Cloned Task',
-    logs: [] // Reset log history loop blueprints on the newborn twin
+    assignDate: new Date().toISOString().split('T')[0],
+    completionDate: '',
+    title: sourceTask.title ? `${sourceTask.title} (Clone)` : 'Cloned Master Task',
+    subTasks: clonedSubtasks,
+    logs: []
   };
 
-  logActivity(cloned, 'Task created via cloning system workflow.');
+  logActivity(cloned, 'Cloned structural framework created successfully.');
   tasks.push(cloned);
   saveToLocalStorage();
   renderTable();
-  toast('Task cloned successfully! 🎉', '⧉');
+  toast('Task structure cloned! 🎉', '⧉');
 }
 
-// ─── STATS ───────────────────────────────────────────────────────────────────
+// ─── STATS MATRICES ENGINE ────────────────────────────────────────────────────
 function renderStats() {
   const total = tasks.length;
   const inProg = tasks.filter(t=>t.status==='In Progress').length;
@@ -657,20 +691,50 @@ function renderStats() {
   const avgPct = total ? Math.round(tasks.reduce((s,t)=>s+(parseInt(t.pct)||0),0)/total) : 0;
   
   document.getElementById('stats-row').innerHTML = `
-    <div class="stat-card"><div class="stat-label">Total Tasks</div><div class="stat-value blue">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Total Main Tasks</div><div class="stat-value blue">${total}</div></div>
     <div class="stat-card"><div class="stat-label">In Progress</div><div class="stat-value purple">${inProg}</div></div>
     <div class="stat-card"><div class="stat-label">Done</div><div class="stat-value green">${done}</div></div>
     <div class="stat-card"><div class="stat-label">On Hold</div><div class="stat-value" style="color:var(--onhold-text)">${onHold}</div></div>
     <div class="stat-card"><div class="stat-label">Raise to IC</div><div class="stat-value" style="color:var(--raise-ic-text)">${raiseIC}</div></div>
     <div class="stat-card"><div class="stat-label">Raise to Broker</div><div class="stat-value" style="color:var(--raise-broker-text)">${raiseBrk}</div></div>
-    <div class="stat-card"><div class="stat-label">Avg % Done</div><div class="stat-value" style="color:#d29922">${avgPct}%</div></div>
+    <div class="stat-card"><div class="stat-label">Avg Complete</div><div class="stat-value" style="color:#d29922">${avgPct}%</div></div>
   `;
 }
 
-// ─── FILTERS ─────────────────────────────────────────────────────────────────
+// ─── NESTED SUB-TASK SUB-STATUS UPDATE CORE ──────────────────────────────────
+function updateSubTaskStatus(mainId, subId, newStatus) {
+  if (currentRole === 'Viewer') return;
+  const mainTask = tasks.find(t => t.id === mainId);
+  if (!mainTask) return;
+  const sub = mainTask.subTasks.find(s => s.id === subId);
+  if (!sub) return;
+
+  const pastStatus = sub.status;
+  if (pastStatus !== newStatus) {
+    sub.status = newStatus;
+    if(newStatus === 'Done') {
+      sub.completionDate = new Date().toISOString().split('T')[0];
+      logActivity(sub, `Status marked as complete. Date recorded.`);
+    } else {
+      sub.completionDate = '';
+      logActivity(sub, `Status reverted from Done to "${newStatus}". Complete date cleared.`);
+    }
+    logActivity(mainTask, `Sub-task [${sub.title}] status shifted from "${pastStatus}" to "${newStatus}"`);
+    
+    syncMainTaskRollups(mainTask);
+    saveToLocalStorage();
+    renderTable();
+    toast('Sub-task status updated!');
+  }
+}
+
+// ─── FILTER CONTROL CONTROLLERS ───────────────────────────────────────────────
 function populateFilters() {
   const brokers = [...new Set(tasks.map(t=>t.broker).filter(Boolean))].sort();
-  const members = [...new Set(tasks.map(t=>t.member).filter(Boolean))].sort();
+  const subtaskMembers = tasks.flatMap(t => (t.subTasks || []).map(st => st.member));
+  const mainMembers = tasks.map(t => t.member);
+  const members = [...new Set([...subtaskMembers, ...mainMembers].filter(Boolean))].sort();
+
   const fb = document.getElementById('filter-broker');
   const fm = document.getElementById('filter-member');
   const bv = fb.value, mv = fm.value;
@@ -690,14 +754,13 @@ function clearFilters() {
   renderTable();
 }
 
-// ─── SORT ────────────────────────────────────────────────────────────────────
 function sortBy(col) {
   if(sortCol===col) sortDir*=-1; else { sortCol=col; sortDir=1; }
   document.querySelectorAll('thead th').forEach(th=>th.classList.remove('sorted'));
   renderTable();
 }
 
-// ─── RENDER TABLE ─────────────────────────────────────────────────────────────
+// ─── CORE RENDERING LOGIC ────────────────────────────────────────────────────
 function renderTable() {
   const search = document.getElementById('search-input').value.toLowerCase();
   const fromDate = document.getElementById('filter-from-date').value;
@@ -708,20 +771,24 @@ function renderTable() {
   const fMember = document.getElementById('filter-member').value;
 
   let filtered = tasks.filter(t => {
-    const haystack = [(t.member||''),(t.title||''),(t.broker||''),(t.notes||''),(t.type||'')].join(' ').toLowerCase();
+    // deep search scanning sub-task boundaries alongside parent criteria
+    const subtasksHaystack = (t.subTasks || []).map(st => (st.title||'') + ' ' + (st.member||'')).join(' ');
+    const haystack = [(t.member||''),(t.title||''),(t.broker||''),(t.notes||''),(t.type||''), subtasksHaystack].join(' ').toLowerCase();
     
     const matchesFrom = !fromDate || t.assignDate >= fromDate;
     const matchesTo = !toDate || t.assignDate <= toDate;
+    
+    const matchesMember = !fMember || t.member === fMember || (t.subTasks || []).some(st => st.member === fMember);
 
     return (!search || haystack.includes(search))
       && matchesFrom && matchesTo
       && (!fStatus || t.status===fStatus)
       && (!fType || t.type===fType)
       && (!fBroker || t.broker===fBroker)
-      && (!fMember || t.member===fMember);
+      && matchesMember;
   });
 
-  const colMap = { assignDate:'assignDate', member:'member', type:'type', broker:'broker', title:'title', status:'status', dueTime:'dueTime', pct:'pct' };
+  const colMap = { assignDate:'assignDate', completionDate:'completionDate', member:'member', type:'type', broker:'broker', title:'title', status:'status', dueTime:'dueTime', pct:'pct' };
   const key = colMap[sortCol] || sortCol;
   filtered.sort((a,b) => {
     let av = a[key]||'', bv = b[key]||'';
@@ -737,150 +804,224 @@ function renderTable() {
   }
   empty.style.display='none';
 
-  tbody.innerHTML = filtered.map((t,i) => {
+  let htmlOut = '';
+  filtered.forEach((t, i) => {
     const pctColor = getPctColor(t.pct);
-    
-    let pctDisplay = '';
-    if (currentRole === 'Admin' || currentRole === 'Manager') {
-       pctDisplay = `
-        <div class="progress-wrap editable-pct" onclick="editCell(${t.id}, 'pct', this)">
-          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${t.pct}%;background:${pctColor}"></div></div>
-          <span class="pct-label" style="color:${pctColor}">${t.pct}%</span>
-        </div>`;
-    } else {
-       pctDisplay = `
-        <div class="progress-wrap">
-          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${t.pct}%;background:${pctColor}"></div></div>
-          <span class="pct-label" style="color:${pctColor}">${t.pct}%</span>
-        </div>`;
-    }
-
     const rowDoneClass = t.status === 'Done' ? 'task-done-row' : '';
+    const isArrowExpanded = expandedTaskIds.has(t.id) ? 'expanded' : '';
+    const subrowStyleDisplay = expandedTaskIds.has(t.id) ? 'table-row' : 'none';
     const isStatusDisabled = currentRole === 'Viewer' ? 'disabled' : '';
 
-    return `<tr data-id="${t.id}" class="${rowDoneClass}" style="animation-delay:${i*0.03}s">
-      <td class="date editable" onclick="if(currentRole==='Admin')editCell(${t.id},'assignDate',this)">${fmtDate(t.assignDate)}</td>
-      <td class="member">${t.member||'<span style="color:var(--text-dim)">—</span>'}</td>
-      <td><span class="type-tag ${typeClass(t.type)}">${typeLabel(t.type)}</span></td>
-      <td class="editable" onclick="if(currentRole==='Admin')editCell(${t.id},'broker',this)">${t.broker ? `<span class="broker-tag">🏢 ${t.broker}</span>` : '<span style="color:var(--text-dim);font-size:12px">—</span>'}</td>
-      <td class="task-title editable" onclick="if(currentRole==='Admin')editCell(${t.id},'title',this)" style="white-space:pre-line">${t.title||'<span style="color:var(--text-dim)">—</span>'}</td>
-      <td>
-        <select class="badge ${statusClass(t.status)}" ${isStatusDisabled} onchange="updateStatus(${t.id},this.value)" style="border:none;background:inherit;color:inherit;font:inherit;cursor:pointer;padding:4px 8px;border-radius:20px;outline:none;">
-          <option ${t.status==='In Progress'?'selected':''}>In Progress</option>
-          <option ${t.status==='Done'?'selected':''}>Done</option>
-          <option ${t.status==='Blocked'?'selected':''}>Blocked</option>
-          <option ${t.status==='On Leave'?'selected':''}>On Leave</option>
-          <option ${t.status==='On Hold'?'selected':''}>On Hold</option>
-          <option ${t.status==='Raise to IC'?'selected':''}>Raise to IC</option>
-          <option ${t.status==='Raise to Broker'?'selected':''}>Raise to Broker</option>
-        </select>
-      </td>
-      <td class="date">${t.dueTime ? fmtDate(t.dueTime) : '<span style="color:var(--text-dim)">—</span>'}</td>
-      <td>${pctDisplay}</td>
-      <td class="notes editable" onclick="if(currentRole==='Admin')editCell(${t.id},'notes',this)">${t.notes||'<span style="color:var(--text-dim)">—</span>'}</td>
-      <td>
-        <div class="row-actions">
-          <button class="action-btn edit" onclick="openEditModal(${t.id})" title="Edit">✎</button>
-          <button class="action-btn clone" onclick="cloneTask(${t.id})" title="Clone / Duplicate">⧉</button>
-          <button class="action-btn log" onclick="openLogModal(${t.id})" title="View Change Activity Logs">⏳</button>
-          <button class="action-btn delete" onclick="deleteTask(${t.id})" title="Delete">✕</button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
+    // HTML Output for parent task row
+    htmlOut += `
+      <tr data-id="${t.id}" class="main-task-row ${rowDoneClass}">
+        <td><span class="expand-btn ${isArrowExpanded}" onclick="toggleTaskExpand(${t.id}, this)">▶</span></td>
+        <td class="date editable" onclick="if(currentRole==='Admin')editCell(${t.id},'assignDate',this)">${fmtDate(t.assignDate)}</td>
+        <td class="date editable" onclick="if(currentRole==='Admin')editCell(${t.id},'completionDate',this)">${fmtDate(t.completionDate) || '<span style="color:var(--text-dim)">—</span>'}</td>
+        <td class="member">${t.member||'<span style="color:var(--text-dim)">—</span>'}</td>
+        <td><span class="type-tag ${typeClass(t.type)}">${typeLabel(t.type)}</span></td>
+        <td class="editable" onclick="if(currentRole==='Admin')editCell(${t.id},'broker',this)">${t.broker ? `<span class="broker-tag">🏢 ${t.broker}</span>` : '<span style="color:var(--text-dim)">—</span>'}</td>
+        <td class="task-title editable" onclick="if(currentRole==='Admin')editCell(${t.id},'title',this)">${t.title||'<span style="color:var(--text-dim)">—</span>'}</td>
+        <td>
+          <select class="badge ${statusClass(t.status)}" ${isStatusDisabled} onchange="updateMainStatusExplicit(${t.id},this.value)" style="border:none;background:inherit;color:inherit;font:inherit;cursor:pointer;padding:4px 8px;border-radius:20px;outline:none;">
+            <option ${t.status==='In Progress'?'selected':''}>In Progress</option>
+            <option ${t.status==='Done'?'selected':''}>Done</option>
+            <option ${t.status==='Blocked'?'selected':''}>Blocked</option>
+            <option ${t.status==='On Leave'?'selected':''}>On Leave</option>
+            <option ${t.status==='On Hold'?'selected':''}>On Hold</option>
+            <option ${t.status==='Raise to IC'?'selected':''}>Raise to IC</option>
+            <option ${t.status==='Raise to Broker'?'selected':''}>Raise to Broker</option>
+          </select>
+        </td>
+        <td class="date">${t.dueTime ? fmtDate(t.dueTime) : '<span style="color:var(--text-dim)">—</span>'}</td>
+        <td>
+          <div class="progress-wrap">
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${t.pct}%;background:${pctColor}"></div></div>
+            <span class="pct-label" style="color:${pctColor}">${t.pct}%</span>
+          </div>
+        </td>
+        <td class="notes editable" onclick="if(currentRole==='Admin')editCell(${t.id},'notes',this)">${t.notes||'<span style="color:var(--text-dim)">—</span>'}</td>
+        <td>
+          <div class="row-actions">
+            <button class="action-btn edit" onclick="openEditModal(${t.id})" title="Edit Task Structure">✎</button>
+            <button class="action-btn clone" onclick="cloneTask(${t.id})" title="Clone Matrix Framework">⧉</button>
+            <button class="action-btn log" onclick="openGlobalLogModal(${t.id}, 'main')" title="View Master Activity History Logs">⏳</button>
+            <button class="action-btn delete" onclick="deleteTask(${t.id})" title="Delete Global Task Row">✕</button>
+          </div>
+        </td>
+      </tr>
+      
+      <tr id="subtask-row-${t.id}" class="subtask-nested-row" style="display:${subrowStyleDisplay}">
+        <td colspan="12">
+          <div class="subtask-wrapper">
+            <div class="subtask-header-title">
+              <span>Nested Task Action Tracks Allocation</span>
+            </div>
+            <table class="subtask-table">
+              <thead>
+                <tr>
+                  <th style="text-align:left; width:45%;">Subtask Name / Action Scope</th>
+                  <th style="text-align:left; width:15%;">Assigned Team Member</th>
+                  <th style="text-align:left; width:12%;">Assign Date</th>
+                  <th style="text-align:left; width:12%;">Complete Date</th>
+                  <th style="text-align:left; width:10%;">Status Badging</th>
+                  <th style="text-align:center; width:6%;">Logs</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(t.subTasks || []).map(st => {
+                  const viewSelectDisabled = currentRole === 'Viewer' ? 'disabled' : '';
+                  return `
+                    <tr>
+                      <td style="color:var(--text); font-weight:500;">${st.title}</td>
+                      <td style="color:var(--text-muted); font-weight:600;">🔷 ${st.member || 'Unassigned'}</td>
+                      <td style="color:var(--text-muted); font-size:11px;">${fmtDate(st.assignDate) || '—'}</td>
+                      <td style="color:#3fb950; font-size:11px; font-weight:600;">${fmtDate(st.completionDate) || '<span style="color:var(--text-dim)">—</span>'}</td>
+                      <td>
+                        <select class="badge ${statusClass(st.status)}" ${viewSelectDisabled} onchange="updateSubTaskStatus(${t.id}, ${st.id}, this.value)" style="border:none;background:transparent;color:inherit;font-size:11px;font-weight:600;cursor:pointer;outline:none;">
+                          <option ${st.status==='In Progress'?'selected':''}>In Progress</option>
+                          <option ${st.status==='Done'?'selected':''}>Done</option>
+                          <option ${st.status==='Blocked'?'selected':''}>Blocked</option>
+                          <option ${st.status==='On Leave'?'selected':''}>On Leave</option>
+                          <option ${st.status==='On Hold'?'selected':''}>On Hold</option>
+                          <option ${st.status==='Raise to IC'?'selected':''}>Raise to IC</option>
+                          <option ${st.status==='Raise to Broker'?'selected':''}>Raise to Broker</option>
+                        </select>
+                      </td>
+                      <td style="text-align:center;">
+                        <button class="action-btn log" style="width:22px; height:22px; font-size:10px;" onclick="openGlobalLogModal(${t.id}, 'sub', ${st.id})" title="View Subtask Historical Logs">⏳</button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
 
+  tbody.innerHTML = htmlOut;
   renderStats();
   populateFilters();
 }
 
-// ─── INLINE CELL EDIT ────────────────────────────────────────────────────────
+// ─── INLINE ENGINE CELL MUTATION CONTROLLERS ─────────────────────────────────
 function editCell(id, field, cell) {
-  if(field !== 'pct' && currentRole !== 'Admin') return;
-  if(field === 'pct' && currentRole === 'Viewer') return;
+  if (currentRole !== 'Admin') return;
+  if (cell.querySelector('input')) return;
   
-  if(cell.querySelector('input,textarea')) return;
   const t = tasks.find(x=>x.id===id);
   const oldVal = t[field]||'';
-  const isMulti = field==='title';
-  const el = document.createElement(isMulti?'textarea':'input');
+  const el = document.createElement('input');
   el.className='inline-edit';
   el.value = oldVal;
-  if(field==='pct') { el.type = 'number'; el.min = 0; el.max = 100; }
-  if(isMulti) { el.rows=3; el.style.minHeight='60px'; }
+  if(field.toLowerCase().includes('date')) el.type = 'date';
+  
   cell.innerHTML='';
   cell.appendChild(el);
   el.focus();
+  
   const save = () => {
-    let parsedVal = el.value.trim();
-    if(field==='pct') {
-       parsedVal = parseInt(parsedVal) || 0;
-       if(parsedVal > 100) parsedVal = 100;
-       if(parsedVal < 0) parsedVal = 0;
-    }
-    
-    // Evaluate if cell delta mutation warrants logging
-    if (String(oldVal) !== String(parsedVal)) {
-       t[field] = parsedVal;
-       let labelField = field === 'pct' ? '% Done' : field.charAt(0).toUpperCase() + field.slice(1);
-       logActivity(t, `Inline Edit: ${labelField} updated from "${oldVal || 'empty'}" to "${parsedVal || 'empty'}"`);
-       
-       if(field==='pct' && parsedVal === 100 && t.status !== 'Done') {
-          const pastStatus = t.status;
-          t.status = 'Done';
-          logActivity(t, `Status updated automatically to "Done" via 100% completion progress change.`);
-       }
-       saveToLocalStorage();
+    let newVal = el.value.trim();
+    if (oldVal !== newVal) {
+      t[field] = newVal;
+      logActivity(t, `Inline modified tracking: ${field} modified from "${oldVal}" to "${newVal}"`);
+      saveToLocalStorage();
     }
     renderTable();
-    toast('Cell updated');
+    toast('Field updated');
   };
   el.addEventListener('blur', save);
-  el.addEventListener('keydown', e => { if(e.key==='Enter' && !isMulti) { e.preventDefault(); save(); } if(e.key==='Escape') renderTable(); });
+  el.addEventListener('keydown', e => { if(e.key==='Enter') { e.preventDefault(); save(); } if(e.key==='Escape') renderTable(); });
 }
 
-// ─── STATUS INLINE ───────────────────────────────────────────────────────────
-function updateStatus(id, val) {
+function updateMainStatusExplicit(id, val) {
   if (currentRole === 'Viewer') return;
   const t = tasks.find(x=>x.id===id);
-  const oldStatus = t.status;
-  
-  if (oldStatus !== val) {
-     t.status = val;
-     logActivity(t, `Status updated from "${oldStatus}" to "${val}"`);
-     if (val === 'Done' && t.pct !== 100) {
-       t.pct = 100;
-       logActivity(t, `Completion progress automatically set to 100% via "Done" status selection.`);
-     }
-     saveToLocalStorage();
-     renderTable();
-     toast('Status updated to ' + val);
+  const old = t.status;
+  if (old !== val) {
+    t.status = val;
+    if(val === 'Done') {
+      t.pct = 100;
+      t.completionDate = new Date().toISOString().split('T')[0];
+      (t.subTasks || []).forEach(st => {
+        if(st.status !== 'Done') {
+          st.status = 'Done';
+          st.completionDate = new Date().toISOString().split('T')[0];
+        }
+      });
+      logActivity(t, `Force override structural change: Task and all subtasks set to complete.`);
+    } else {
+      t.completionDate = '';
+    }
+    logActivity(t, `Explicit status shift: "${old}" ➔ "${val}"`);
+    saveToLocalStorage();
+    renderTable();
+    toast('Status modified');
   }
 }
 
-// ─── DELETE ──────────────────────────────────────────────────────────────────
+// ─── DELETE ACTION LAYERS ────────────────────────────────────────────────────
 function deleteTask(id) {
   if (currentRole !== 'Admin') return;
-  if(!confirm('Delete this task?')) return;
+  if(!confirm('Delete this main task configuration alongside all sub-task entries?')) return;
   tasks = tasks.filter(t=>t.id!==id);
   saveToLocalStorage();
   renderTable();
-  toast('Task deleted','🗑');
+  toast('Task destroyed','🗑');
 }
 
-// ─── MODAL ───────────────────────────────────────────────────────────────────
+// ─── DYNAMIC FORM MODAL SUB-GRID BLUEPRINTS GENERATOR ───────────────────────
+function addBlankSubtaskFormRow(title = '', member = '', status = 'In Progress', assignDate = '', completionDate = '', id = '') {
+  const container = document.getElementById('modal-subtasks-container');
+  const subId = id || Math.floor(Math.random() * 1000000);
+  const assignVal = assignDate || new Date().toISOString().split('T')[0];
+  
+  const div = document.createElement('div');
+  div.className = 'modal-subtask-row';
+  div.setAttribute('data-sub-id', subId);
+  div.innerHTML = `
+    <input type="text" class="sub-f-title" style="flex:2;" value="${escapeHtml(title)}" placeholder="Subtask scope statement..." required />
+    <input type="text" class="sub-f-member" style="flex:1;" value="${escapeHtml(member)}" placeholder="Assignee Name" />
+    <input type="date" class="sub-f-assign-date" style="flex:1; font-size:11px;" value="${assignVal}" />
+    <input type="date" class="sub-f-completion-date" style="flex:1; font-size:11px;" value="${completionDate}" placeholder="Complete Date" />
+    <select class="sub-f-status" style="width:110px;">
+      <option ${status==='In Progress'?'selected':''}>In Progress</option>
+      <option ${status==='Done'?'selected':''}>Done</option>
+      <option ${status==='Blocked'?'selected':''}>Blocked</option>
+      <option ${status==='On Leave'?'selected':''}>On Leave</option>
+      <option ${status==='On Hold'?'selected':''}>On Hold</option>
+      <option ${status==='Raise to IC'?'selected':''}>Raise to IC</option>
+      <option ${status==='Raise to Broker'?'selected':''}>Raise to Broker</option>
+    </select>
+    <button class="action-btn delete" type="button" onclick="this.parentElement.remove()">✕</button>
+  `;
+  container.appendChild(div);
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+// ─── STRUCTURAL MANAGEMENT DIALOG WINDOWS ────────────────────────────────────
 function openAddModal() {
   if (currentRole !== 'Admin') return;
   editingId = null;
-  document.getElementById('modal-title').textContent = 'Add New Task';
+  document.getElementById('modal-title').textContent = 'Add New Task Structure';
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-completion-date').value = '';
   document.getElementById('f-member').value = '';
   document.getElementById('f-type').value = 'Backend';
   document.getElementById('f-broker').value = '';
   document.getElementById('f-title').value = '';
-  document.getElementById('f-status').value = 'In Progress';
   document.getElementById('f-due').value = '';
-  document.getElementById('f-pct').value = '';
   document.getElementById('f-notes').value = '';
+  document.getElementById('modal-subtasks-container').innerHTML = '';
+  
+  // Initialize with single subtask deliverable trace baseline block
+  addBlankSubtaskFormRow('Deliverable Core Execution Base');
   document.getElementById('modal-overlay').classList.add('open');
 }
 
@@ -888,66 +1029,91 @@ function openEditModal(id) {
   if (currentRole !== 'Admin') return;
   editingId = id;
   const t = tasks.find(x=>x.id===id);
-  document.getElementById('modal-title').textContent = 'Edit Task';
-  document.getElementById('f-date').value = t.assignDate;
-  document.getElementById('f-member').value = t.member;
-  document.getElementById('f-type').value = t.type;
-  document.getElementById('f-broker').value = t.broker;
-  document.getElementById('f-title').value = t.title;
-  document.getElementById('f-status').value = t.status;
-  document.getElementById('f-due').value = t.dueTime;
-  document.getElementById('f-pct').value = t.pct;
-  document.getElementById('f-notes').value = t.notes;
+  document.getElementById('modal-title').textContent = 'Edit Task Architecture';
+  document.getElementById('f-date').value = t.assignDate || '';
+  document.getElementById('f-completion-date').value = t.completionDate || '';
+  document.getElementById('f-member').value = t.member || '';
+  document.getElementById('f-type').value = t.type || 'Backend';
+  document.getElementById('f-broker').value = t.broker || '';
+  document.getElementById('f-title').value = t.title || '';
+  document.getElementById('f-due').value = t.dueTime || '';
+  document.getElementById('f-notes').value = t.notes || '';
+  
+  const container = document.getElementById('modal-subtasks-container');
+  container.innerHTML = '';
+  
+  if(t.subTasks && t.subTasks.length) {
+    t.subTasks.forEach(st => {
+      addBlankSubtaskFormRow(st.title, st.member, st.status, st.assignDate, st.completionDate, st.id);
+    });
+  } else {
+    addBlankSubtaskFormRow('Deliverable Core Execution Base');
+  }
+  
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
 function saveTask() {
   if (currentRole !== 'Admin') return;
   
-  const incomingStatus = document.getElementById('f-status').value;
-  let incomingPct = parseInt(document.getElementById('f-pct').value)||0;
-  if(incomingStatus === 'Done' && incomingPct < 100) incomingPct = 100;
+  const memberLeadInput = document.getElementById('f-member').value.trim();
+  if(!memberLeadInput) { alert('Main Team Member Lead Assignee is required'); return; }
+
+  // Extract form compiled arrays for nested children rows
+  const subRows = document.querySelectorAll('.modal-subtask-row');
+  let compiledSubtasks = [];
+
+  const oldTaskRef = editingId ? tasks.find(x => x.id === editingId) : null;
+
+  subRows.forEach(row => {
+    const subId = parseInt(row.getAttribute('data-sub-id'));
+    const title = row.querySelector('.sub-f-title').value.trim() || 'Action Item Scope';
+    const member = row.querySelector('.sub-f-member').value.trim() || memberLeadInput;
+    const status = row.querySelector('.sub-f-status').value;
+    const assignDate = row.querySelector('.sub-f-assign-date').value || new Date().toISOString().split('T')[0];
+    let completionDate = row.querySelector('.sub-f-completion-date').value;
+    
+    if (status === 'Done' && !completionDate) {
+      completionDate = new Date().toISOString().split('T')[0];
+    } else if (status !== 'Done') {
+      completionDate = '';
+    }
+
+    let existingLogs = [];
+    if (oldTaskRef && oldTaskRef.subTasks) {
+      const oldSub = oldTaskRef.subTasks.find(s => s.id === subId);
+      if (oldSub && oldSub.logs) existingLogs = oldSub.logs;
+    }
+
+    compiledSubtasks.push({ id: subId, title, member, status, assignDate, completionDate, logs: existingLogs });
+  });
 
   const data = {
     assignDate: document.getElementById('f-date').value,
-    member: document.getElementById('f-member').value.trim(),
+    completionDate: document.getElementById('f-completion-date').value,
+    member: memberLeadInput,
     type: document.getElementById('f-type').value,
     broker: document.getElementById('f-broker').value.trim(),
     title: document.getElementById('f-title').value.trim(),
-    status: incomingStatus,
     dueTime: document.getElementById('f-due').value,
-    pct: incomingPct,
     notes: document.getElementById('f-notes').value.trim(),
+    subTasks: compiledSubtasks,
+    status: editingId ? oldTaskRef.status : 'In Progress'
   };
-  if(!data.member) { alert('Team Member is required'); return; }
 
   if(editingId) {
-    const t = tasks.find(x=>x.id===editingId);
-    
-    // Evaluate across form data properties to capture delta logs
-    let modifications = [];
-    if(t.status !== data.status) modifications.push(`Status ("${t.status}" ➔ "${data.status}")`);
-    if(parseInt(t.pct) !== parseInt(data.pct)) modifications.push(`Progress ("${t.pct}%" ➔ "${data.pct}%")`);
-    if(t.notes !== data.notes) modifications.push(`Notes/Blockers ("${t.notes || 'empty'}" ➔ "${data.notes || 'empty'}")`);
-    if(t.title !== data.title) modifications.push(`Title modified`);
-    if(t.broker !== data.broker) modifications.push(`Broker update`);
-    if(t.member !== data.member) modifications.push(`Assignee shifted`);
-    
-    if (modifications.length > 0) {
-       logActivity(t, `Form Update changes saved: ${modifications.join(', ')}`);
-    }
-
-    Object.assign(t, data);
-    toast('Task updated ✨');
+    logActivity(oldTaskRef, `Structural Framework updated via Admin management terminal modification.`);
+    Object.assign(oldTaskRef, data);
+    syncMainTaskRollups(oldTaskRef);
+    toast('Architecture mapped ✨');
   } else {
-    const newTask = { id: nextId++, ...data, logs: [] };
-    logActivity(newTask, 'Task entry initialized inside dashboard management grid.');
-    tasks.push(newTask);
-    toast('Task added 🎉');
+    const freshBlock = { id: nextId++, ...data, logs: [] };
+    logActivity(freshBlock, 'Master database entry task initialization.');
+    syncMainTaskRollups(freshBlock);
+    tasks.push(freshBlock);
+    toast('Task stack deployed 🎉');
   }
   
   saveToLocalStorage();
@@ -955,63 +1121,53 @@ function saveTask() {
   renderTable();
 }
 
-// ─── LOG MODAL SCREEN CONTROLLERS ────────────────────────────────────────────
-function openLogModal(id) {
-  const t = tasks.find(x => x.id === id);
+// ─── LOG LAYER CONSOLE VISUALIZATION WINDOWS ──────────────────────────────────
+function openGlobalLogModal(mainId, category, subId = null) {
+  const t = tasks.find(x => x.id === mainId);
   if (!t) return;
   
-  document.getElementById('log-modal-task-title').textContent = t.title ? `Task: ${t.title}` : 'Task: (No Title)';
-  const container = document.getElementById('log-modal-timeline');
-  container.innerHTML = '';
-  
-  const logsList = t.logs || [];
-  if (logsList.length === 0) {
-    container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:13px;">No action history logged yet for this row.</div>`;
+  const header = document.getElementById('log-modal-header-title');
+  const taskTitleEl = document.getElementById('log-modal-task-title');
+  const timeline = document.getElementById('log-modal-timeline');
+  timeline.innerHTML = '';
+
+  if (category === 'main') {
+    header.textContent = 'Master Task Tracker Activity Log';
+    taskTitleEl.textContent = `Scope Context: ${t.title || 'Global Parent Header'}`;
+    renderTimelineLogsList(t.logs, timeline);
   } else {
-    container.innerHTML = logsList.map(log => `
+    const subItem = (t.subTasks || []).find(s => s.id === subId);
+    if(!subItem) return;
+    header.textContent = 'Subtask Action Activity Log';
+    taskTitleEl.textContent = `Subtask Module: ${subItem.title}`;
+    renderTimelineLogsList(subItem.logs, timeline);
+  }
+
+  document.getElementById('log-modal-overlay').classList.add('open');
+}
+
+function renderTimelineLogsList(logArray, targetContainer) {
+  const list = logArray || [];
+  if (list.length === 0) {
+    targetContainer.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:12px;">No historical activities registered under this layer.</div>`;
+  } else {
+    targetContainer.innerHTML = list.map(log => `
       <div class="log-item">
         <div class="log-timestamp">${log.timestamp}</div>
         <div class="log-text">${log.description}</div>
       </div>
     `).join('');
   }
-  
-  document.getElementById('log-modal-overlay').classList.add('open');
 }
 
-function closeLogModal() {
-  document.getElementById('log-modal-overlay').classList.remove('open');
-}
+function closeLogModal() { document.getElementById('log-modal-overlay').classList.remove('open'); }
 
-// ─── EXPORT CSV ──────────────────────────────────────────────────────────────
-function getFilteredTasks() {
-  const search  = document.getElementById('search-input').value.toLowerCase();
-  const fromDate = document.getElementById('filter-from-date').value;
-  const toDate = document.getElementById('filter-to-date').value;
-  const fStatus = document.getElementById('filter-status').value;
-  const fType   = document.getElementById('filter-type').value;
-  const fBroker = document.getElementById('filter-broker').value;
-  const fMember = document.getElementById('filter-member').value;
-  return tasks.filter(t => {
-    const hay = [(t.member||''),(t.title||''),(t.broker||''),(t.notes||''),(t.type||'')].join(' ').toLowerCase();
-    const matchesFrom = !fromDate || t.assignDate >= fromDate;
-    const matchesTo = !toDate || t.assignDate <= toDate;
-
-    return (!search || hay.includes(search))
-      && matchesFrom && matchesTo
-      && (!fStatus || t.status===fStatus)
-      && (!fType   || t.type===fType)
-      && (!fBroker || t.broker===fBroker)
-      && (!fMember || t.member===fMember);
-  });
-}
-
+// ─── DATA SHEET EXPORT CONTROLLERS ───────────────────────────────────────────
 function exportExcel() {
   const filtered = getFilteredTasks();
   if (!filtered.length) { toast('No tasks to export', '⚠️'); return; }
 
-  const headers = ['Assign Date','Team Member','Type','Broker Name','Task Title','Status','Due Date','% Done','Notes'];
-
+  const headers = ['Assign Date','Complete Date','Lead Member','Type','Broker Name','Main Task Title','Status','Due Date','% Done','Notes'];
   const escape = val => {
     const str = (val === null || val === undefined) ? '' : String(val);
     if (str.includes(',') || str.includes('\n') || str.includes('"')) {
@@ -1022,6 +1178,7 @@ function exportExcel() {
 
   const rows = filtered.map(t => [
     fmtDate(t.assignDate),
+    fmtDate(t.completionDate),
     t.member,
     t.type,
     t.broker,
@@ -1033,43 +1190,26 @@ function exportExcel() {
   ].map(escape).join(','));
 
   const csv = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
-
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  const now  = new Date().toLocaleDateString('en-IN').replace(/\//g,'-');
-
-  const fStatus = document.getElementById('filter-status').value;
-  const fMember = document.getElementById('filter-member').value;
-  const fBroker = document.getElementById('filter-broker').value;
-  const suffix  = [fStatus, fMember, fBroker].filter(Boolean).join('_') || 'All';
+  now = new Date().toLocaleDateString('en-IN').replace(/\//g,'-');
 
   a.href = url;
-  a.download = `DevTasks_${suffix}_${now}.csv`;
+  a.download = `DevTasks_Hierarchical_${now}.csv`;
   a.click();
   URL.revokeObjectURL(url);
-  toast(`Exported ${filtered.length} task(s) ✅`);
+  toast(`Exported sheets successfully ✅`);
 }
 
-// ─── KEYBOARD ────────────────────────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if(e.key==='Escape') { closeModal(); closeLogModal(); }
-});
-document.getElementById('modal-overlay').addEventListener('click', e => {
-  if(e.target===e.currentTarget) closeModal();
-});
-document.getElementById('log-modal-overlay').addEventListener('click', e => {
-  if(e.target===e.currentTarget) closeLogModal();
-});
+// Keyboard Escape Hook
+document.addEventListener('keydown', e => { if(e.key==='Escape') { closeModal(); closeLogModal(); } });
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
+// ─── INITIAL APP EXECUTION BOOT ──────────────────────────────────────────────
 document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-
 document.getElementById('app-user-role').value = currentRole;
 document.body.classList.add('role-' + currentRole.toLowerCase());
 
-renderStats();
-populateFilters();
 renderTable();
 </script>
 </body>
