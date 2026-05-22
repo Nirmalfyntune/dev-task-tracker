@@ -83,7 +83,6 @@
   .topbar-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
   .topbar-right { display: flex; align-items: center; gap: 12px; }
 
-  /* ROLE ACCESS SELECTION PANEL */
   .role-panel {
     display: flex; align-items: center; gap: 8px; background: var(--surface2);
     border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px;
@@ -357,8 +356,24 @@
   .action-btn.edit:hover { background: rgba(37,99,235,0.3); }
   .action-btn.clone { background: rgba(167,139,250,0.15); color: var(--purple); }
   .action-btn.clone:hover { background: rgba(167,139,250,0.3); }
+  .action-btn.log { background: rgba(20, 184, 166, 0.15); color: #2dd4bf; }
+  .action-btn.log:hover { background: rgba(20, 184, 166, 0.3); }
   .action-btn.delete { background: rgba(248,81,73,0.12); color: var(--red); }
   .action-btn.delete:hover { background: rgba(248,81,73,0.25); }
+
+  /* ACTIVITY LOG UI TIMELINE STYLES */
+  .log-timeline {
+    display: flex; flex-direction: column; gap: 12px; margin-top: 14px;
+    max-height: 350px; overflow-y: auto; padding-right: 4px;
+  }
+  .log-item {
+    background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid #2dd4bf;
+    padding: 10px 12px; border-radius: 6px; font-size: 12px; line-height: 1.4;
+  }
+  .log-timestamp {
+    font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-family: 'Syne', sans-serif; font-weight: 600;
+  }
+  .log-text { color: var(--text); }
 
   /* ROLE-BASED CONDITIONAL DISPLAY RULES */
   body.role-viewer .action-btn.delete,
@@ -534,6 +549,20 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="log-modal-overlay">
+  <div class="modal" style="width: 480px;">
+    <h2>Task Activity History Log</h2>
+    <p id="log-modal-task-title" style="font-size: 13px; color: var(--text-muted); margin-top: -12px; margin-bottom: 12px; font-weight: 500;"></p>
+    <hr style="border-color: var(--border); margin-bottom: 14px;">
+    
+    <div class="log-timeline" id="log-modal-timeline"></div>
+    
+    <div class="modal-footer" style="margin-top: 20px;">
+      <button class="btn btn-ghost" onclick="closeLogModal()">Close View</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-container" id="toast-container"></div>
 
 <script>
@@ -583,6 +612,18 @@ function toast(msg, type='✅') {
   setTimeout(() => t.remove(), 3000);
 }
 
+// ─── LOG LAYER MUTATION CONTROLLER ───────────────────────────────────────────
+function logActivity(task, description) {
+  if (!task.logs) task.logs = [];
+  
+  const timestamp = new Date().toLocaleString('en-IN', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+  });
+  
+  task.logs.unshift({ timestamp, description });
+}
+
 // ─── CLONE FEATURE ───────────────────────────────────────────────────────────
 function cloneTask(id) {
   if (currentRole === 'Viewer' || currentRole === 'Manager') return;
@@ -594,16 +635,18 @@ function cloneTask(id) {
     id: nextId++,
     status: 'In Progress',
     pct: 0,
-    title: sourceTask.title ? `${sourceTask.title} (Clone)` : 'Cloned Task'
+    title: sourceTask.title ? `${sourceTask.title} (Clone)` : 'Cloned Task',
+    logs: [] // Reset log history loop blueprints on the newborn twin
   };
 
+  logActivity(cloned, 'Task created via cloning system workflow.');
   tasks.push(cloned);
   saveToLocalStorage();
   renderTable();
   toast('Task cloned successfully! 🎉', '⧉');
 }
 
-// ─── STATS (FIXED METRICS ENGINE) ────────────────────────────────────────────
+// ─── STATS ───────────────────────────────────────────────────────────────────
 function renderStats() {
   const total = tasks.length;
   const inProg = tasks.filter(t=>t.status==='In Progress').length;
@@ -613,7 +656,6 @@ function renderStats() {
   const raiseBrk = tasks.filter(t=>t.status==='Raise to Broker').length;
   const avgPct = total ? Math.round(tasks.reduce((s,t)=>s+(parseInt(t.pct)||0),0)/total) : 0;
   
-  // Replaced Blocked with Raise to Broker card layout requested
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Total Tasks</div><div class="stat-value blue">${total}</div></div>
     <div class="stat-card"><div class="stat-label">In Progress</div><div class="stat-value purple">${inProg}</div></div>
@@ -740,6 +782,7 @@ function renderTable() {
         <div class="row-actions">
           <button class="action-btn edit" onclick="openEditModal(${t.id})" title="Edit">✎</button>
           <button class="action-btn clone" onclick="cloneTask(${t.id})" title="Clone / Duplicate">⧉</button>
+          <button class="action-btn log" onclick="openLogModal(${t.id})" title="View Change Activity Logs">⏳</button>
           <button class="action-btn delete" onclick="deleteTask(${t.id})" title="Delete">✕</button>
         </div>
       </td>
@@ -757,11 +800,11 @@ function editCell(id, field, cell) {
   
   if(cell.querySelector('input,textarea')) return;
   const t = tasks.find(x=>x.id===id);
-  const val = t[field]||'';
+  const oldVal = t[field]||'';
   const isMulti = field==='title';
   const el = document.createElement(isMulti?'textarea':'input');
   el.className='inline-edit';
-  el.value = val;
+  el.value = oldVal;
   if(field==='pct') { el.type = 'number'; el.min = 0; el.max = 100; }
   if(isMulti) { el.rows=3; el.style.minHeight='60px'; }
   cell.innerHTML='';
@@ -774,13 +817,20 @@ function editCell(id, field, cell) {
        if(parsedVal > 100) parsedVal = 100;
        if(parsedVal < 0) parsedVal = 0;
     }
-    t[field] = parsedVal;
     
-    if(field==='pct' && parsedVal === 100) {
-       t.status = 'Done';
+    // Evaluate if cell delta mutation warrants logging
+    if (String(oldVal) !== String(parsedVal)) {
+       t[field] = parsedVal;
+       let labelField = field === 'pct' ? '% Done' : field.charAt(0).toUpperCase() + field.slice(1);
+       logActivity(t, `Inline Edit: ${labelField} updated from "${oldVal || 'empty'}" to "${parsedVal || 'empty'}"`);
+       
+       if(field==='pct' && parsedVal === 100 && t.status !== 'Done') {
+          const pastStatus = t.status;
+          t.status = 'Done';
+          logActivity(t, `Status updated automatically to "Done" via 100% completion progress change.`);
+       }
+       saveToLocalStorage();
     }
-    
-    saveToLocalStorage();
     renderTable();
     toast('Cell updated');
   };
@@ -792,13 +842,19 @@ function editCell(id, field, cell) {
 function updateStatus(id, val) {
   if (currentRole === 'Viewer') return;
   const t = tasks.find(x=>x.id===id);
-  t.status = val;
-  if (val === 'Done') {
-    t.pct = 100;
+  const oldStatus = t.status;
+  
+  if (oldStatus !== val) {
+     t.status = val;
+     logActivity(t, `Status updated from "${oldStatus}" to "${val}"`);
+     if (val === 'Done' && t.pct !== 100) {
+       t.pct = 100;
+       logActivity(t, `Completion progress automatically set to 100% via "Done" status selection.`);
+     }
+     saveToLocalStorage();
+     renderTable();
+     toast('Status updated to ' + val);
   }
-  saveToLocalStorage();
-  renderTable();
-  toast('Status updated to ' + val);
 }
 
 // ─── DELETE ──────────────────────────────────────────────────────────────────
@@ -851,35 +907,80 @@ function closeModal() {
 
 function saveTask() {
   if (currentRole !== 'Admin') return;
+  
+  const incomingStatus = document.getElementById('f-status').value;
+  let incomingPct = parseInt(document.getElementById('f-pct').value)||0;
+  if(incomingStatus === 'Done' && incomingPct < 100) incomingPct = 100;
+
   const data = {
     assignDate: document.getElementById('f-date').value,
     member: document.getElementById('f-member').value.trim(),
     type: document.getElementById('f-type').value,
     broker: document.getElementById('f-broker').value.trim(),
     title: document.getElementById('f-title').value.trim(),
-    status: document.getElementById('f-status').value,
+    status: incomingStatus,
     dueTime: document.getElementById('f-due').value,
-    pct: parseInt(document.getElementById('f-pct').value)||0,
+    pct: incomingPct,
     notes: document.getElementById('f-notes').value.trim(),
   };
   if(!data.member) { alert('Team Member is required'); return; }
-  
-  if(data.status === 'Done' && data.pct < 100) {
-    data.pct = 100;
-  }
 
   if(editingId) {
     const t = tasks.find(x=>x.id===editingId);
+    
+    // Evaluate across form data properties to capture delta logs
+    let modifications = [];
+    if(t.status !== data.status) modifications.push(`Status ("${t.status}" ➔ "${data.status}")`);
+    if(parseInt(t.pct) !== parseInt(data.pct)) modifications.push(`Progress ("${t.pct}%" ➔ "${data.pct}%")`);
+    if(t.notes !== data.notes) modifications.push(`Notes/Blockers ("${t.notes || 'empty'}" ➔ "${data.notes || 'empty'}")`);
+    if(t.title !== data.title) modifications.push(`Title modified`);
+    if(t.broker !== data.broker) modifications.push(`Broker update`);
+    if(t.member !== data.member) modifications.push(`Assignee shifted`);
+    
+    if (modifications.length > 0) {
+       logActivity(t, `Form Update changes saved: ${modifications.join(', ')}`);
+    }
+
     Object.assign(t, data);
     toast('Task updated ✨');
   } else {
-    tasks.push({ id: nextId++, ...data });
+    const newTask = { id: nextId++, ...data, logs: [] };
+    logActivity(newTask, 'Task entry initialized inside dashboard management grid.');
+    tasks.push(newTask);
     toast('Task added 🎉');
   }
   
   saveToLocalStorage();
   closeModal();
   renderTable();
+}
+
+// ─── LOG MODAL SCREEN CONTROLLERS ────────────────────────────────────────────
+function openLogModal(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  
+  document.getElementById('log-modal-task-title').textContent = t.title ? `Task: ${t.title}` : 'Task: (No Title)';
+  const container = document.getElementById('log-modal-timeline');
+  container.innerHTML = '';
+  
+  const logsList = t.logs || [];
+  if (logsList.length === 0) {
+    container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:13px;">No action history logged yet for this row.</div>`;
+  } else {
+    container.innerHTML = logsList.map(log => `
+      <div class="log-item">
+        <div class="log-timestamp">${log.timestamp}</div>
+        <div class="log-text">${log.description}</div>
+      </div>
+    `).join('');
+  }
+  
+  document.getElementById('log-modal-overlay').classList.add('open');
+}
+
+function closeLogModal() {
+  document.getElementById('log-modal-overlay').classList.remove('open');
 }
 
 // ─── EXPORT CSV ──────────────────────────────────────────────────────────────
@@ -952,10 +1053,13 @@ function exportExcel() {
 
 // ─── KEYBOARD ────────────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
-  if(e.key==='Escape') closeModal();
+  if(e.key==='Escape') { closeModal(); closeLogModal(); }
 });
 document.getElementById('modal-overlay').addEventListener('click', e => {
   if(e.target===e.currentTarget) closeModal();
+});
+document.getElementById('log-modal-overlay').addEventListener('click', e => {
+  if(e.target===e.currentTarget) closeLogModal();
 });
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
