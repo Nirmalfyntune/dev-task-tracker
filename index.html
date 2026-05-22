@@ -313,7 +313,6 @@
   }
   .modal h2 { font-family: 'Syne', sans-serif; font-size: 20px; margin-bottom: 20px; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .form-group { display: flex; flex-direction: column; gap: 6px; }
   .form-group.full { grid-column: 1/-1; }
   .form-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-muted); }
@@ -548,7 +547,8 @@ tasks = tasks.map(t => {
     }];
     migrated = true;
   }
-  // Sanitize internal key tracks from past mismatch versions
+  
+  // Clean structure logic conversion tracks st.id smoothly
   t.subTasks.forEach(st => {
     if (st.subId && !st.id) {
       st.id = st.subId;
@@ -977,7 +977,6 @@ function deleteTask(id) {
 // ─── DYNAMIC FORM MODAL SUB-GRID BLUEPRINTS GENERATOR ───────────────────────
 function addBlankSubtaskFormRow(title = '', member = '', status = 'In Progress', assignDate = '', completionDate = '', id = '') {
   const container = document.getElementById('modal-subtasks-container');
-  // UNIFIED KEY STAMPING: Enforce standard st.id mapping configuration
   const subId = id ? parseInt(id) : Math.floor(Math.random() * 1000000);
   const assignVal = assignDate || new Date().toISOString().split('T')[0];
   
@@ -1086,7 +1085,7 @@ function saveTask() {
       if (oldSub && oldSub.logs) existingLogs = oldSub.logs;
     }
 
-    // Unified key property configuration assembly
+    // Connected exact object keys setup
     compiledSubtasks.push({ id: subId, title, member, status, assignDate, completionDate, logs: existingLogs });
   });
 
@@ -1114,7 +1113,7 @@ function saveTask() {
     logActivity(freshBlock, 'Master database entry task initialization.');
     tasks.push(freshBlock);
     
-    // Auto-open accordion view upon row creation
+    // Auto-open target folder on screen upon submission saving
     expandedTaskIds.add(createdId);
     toast('Task stack deployed 🎉');
   }
