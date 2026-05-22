@@ -185,7 +185,7 @@
 
   tbody tr {
     border-bottom: 1px solid var(--border);
-    transition: background 0.15s, transform 0.15s;
+    transition: background 0.15s, transform 0.15s, border-left 0.15s;
     animation: fadeInRow 0.3s ease both;
   }
   @keyframes fadeInRow {
@@ -194,6 +194,15 @@
   }
   tbody tr:hover { background: rgba(37,99,235,0.06); transform: scale(1.001); }
   tbody tr.selected { background: rgba(37,99,235,0.1); border-left: 3px solid var(--accent); }
+  
+  /* Highlight Done tasks with subtle green background and strong left border */
+  tbody tr.task-done-row {
+    background: rgba(63, 185, 80, 0.08);
+    border-left: 4px solid var(--green);
+  }
+  tbody tr.task-done-row:hover {
+    background: rgba(63, 185, 80, 0.13);
+  }
 
   td {
     padding: 12px 14px;
@@ -304,6 +313,7 @@
   }
   .modal h2 { font-family: 'Syne', sans-serif; font-size: 20px; margin-bottom: 20px; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .form-group { display: flex; flex-direction: column; gap: 6px; }
   .form-group.full { grid-column: 1/-1; }
   .form-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-muted); }
@@ -353,6 +363,8 @@
   }
   .action-btn.edit { background: rgba(37,99,235,0.15); color: var(--accent2); }
   .action-btn.edit:hover { background: rgba(37,99,235,0.3); }
+  .action-btn.clone { background: rgba(167,139,250,0.15); color: var(--purple); }
+  .action-btn.clone:hover { background: rgba(167,139,250,0.3); }
   .action-btn.delete { background: rgba(248,81,73,0.12); color: var(--red); }
   .action-btn.delete:hover { background: rgba(248,81,73,0.25); }
 
@@ -513,7 +525,7 @@
 <script>
 // ─── DATA ────────────────────────────────────────────────────────────────────
 let tasks = [
-  { id:1, assignDate:'2026-05-14', member:'Raj Kale',           type:'Backend',    broker:'Godiigit',     title:'Godiigit PAYD (half day)',               status:'In Progress', dueTime:'', pct:40,  notes:'' },
+  { id:1, assignDate:'2026-05-14', member:'Raj Kale',           type:'Backend',    broker:'Godiigit',    title:'Godiigit PAYD (half day)',              status:'In Progress', dueTime:'', pct:40,  notes:'' },
   { id:2, assignDate:'2026-05-11', member:'Aniket Kamble',      type:'AU Backend', broker:'AU',           title:'Call Centre - AU API implementation',    status:'In Progress', dueTime:'', pct:70,  notes:'' },
   { id:3, assignDate:'2026-05-21', member:'Dusmanta Naidu',     type:'Backend',    broker:'Hero Broker',  title:'Oriental New API kit integration for Hero Broker', status:'In Progress', dueTime:'', pct:0,   notes:'' },
   { id:4, assignDate:'2026-05-14', member:'Sayali Patil',       type:'Backend',    broker:'Hero Broker',  title:'FG Renewal Integration for Hero Broker', status:'In Progress', dueTime:'', pct:10,  notes:'In review' },
@@ -546,6 +558,25 @@ function toast(msg, type='✅') {
   t.innerHTML = `<span>${type}</span> ${msg}`;
   c.appendChild(t);
   setTimeout(() => t.remove(), 3000);
+}
+
+// ─── CLONE FEATURE ───────────────────────────────────────────────────────────
+function cloneTask(id) {
+  const sourceTask = tasks.find(x => x.id === id);
+  if (!sourceTask) return;
+
+  // Create a carbon copy, but reset baseline tracker properties for safety
+  const cloned = {
+    ...sourceTask,
+    id: nextId++,
+    status: 'In Progress', // reset status so old done values aren't blindly kept
+    pct: 0,                // reset progress meter for the new entry
+    title: sourceTask.title ? `${sourceTask.title} (Clone)` : 'Cloned Task'
+  };
+
+  tasks.push(cloned);
+  renderTable();
+  toast('Task cloned successfully! 🎉', '⧉');
 }
 
 // ─── STATS ───────────────────────────────────────────────────────────────────
@@ -639,7 +670,10 @@ function renderTable() {
         <span class="pct-label" style="color:${pctColor}">${t.pct}%</span>
       </div>` : `<span style="color:var(--text-dim);font-size:12px">—</span>`;
 
-    return `<tr data-id="${t.id}" style="animation-delay:${i*0.03}s">
+    // Dynamic row selection rule based on "Done" state
+    const rowDoneClass = t.status === 'Done' ? 'task-done-row' : '';
+
+    return `<tr data-id="${t.id}" class="${rowDoneClass}" style="animation-delay:${i*0.03}s">
       <td class="date editable" onclick="editCell(${t.id},'assignDate',this)">${fmtDate(t.assignDate)}</td>
       <td class="member">${t.member}</td>
       <td><span class="type-tag ${typeClass(t.type)}">${typeLabel(t.type)}</span></td>
@@ -662,6 +696,7 @@ function renderTable() {
       <td>
         <div class="row-actions">
           <button class="action-btn edit" onclick="openEditModal(${t.id})" title="Edit">✎</button>
+          <button class="action-btn clone" onclick="cloneTask(${t.id})" title="Clone / Duplicate">⧉</button>
           <button class="action-btn delete" onclick="deleteTask(${t.id})" title="Delete">✕</button>
         </div>
       </td>
@@ -698,6 +733,12 @@ function editCell(id, field, cell) {
 function updateStatus(id, val) {
   const t = tasks.find(x=>x.id===id);
   t.status = val;
+  
+  // Quality of life: If someone selects "Done", auto-fill progress bar to 100%
+  if (val === 'Done') {
+    t.pct = 100;
+  }
+  
   renderTable();
   toast('Status updated to ' + val);
 }
@@ -759,6 +800,12 @@ function saveTask() {
     notes: document.getElementById('f-notes').value.trim(),
   };
   if(!data.member) { alert('Team Member is required'); return; }
+  
+  // If the status inside modal is explicitly saved as Done, make sure % reflects it
+  if(data.status === 'Done' && data.pct < 100) {
+    data.pct = 100;
+  }
+
   if(editingId) {
     const t = tasks.find(x=>x.id===editingId);
     Object.assign(t, data);
@@ -796,7 +843,6 @@ function exportExcel() {
 
   const escape = val => {
     const str = (val === null || val === undefined) ? '' : String(val);
-    // wrap in quotes if it contains comma, newline or quote
     if (str.includes(',') || str.includes('\n') || str.includes('"')) {
       return '"' + str.replace(/"/g, '""').replace(/\n/g, ' | ') + '"';
     }
@@ -815,7 +861,6 @@ function exportExcel() {
     t.notes
   ].map(escape).join(','));
 
-  // BOM (\uFEFF) ensures Excel opens with correct encoding
   const csv = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
