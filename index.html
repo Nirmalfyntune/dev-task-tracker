@@ -245,7 +245,6 @@
   /* SUBTASK NESTED ROW GRID CONTAINER */
   .subtask-nested-row { display: none; background: var(--subtask-bg); border-bottom: 1px solid var(--border); }
   .subtask-wrapper { padding: 14px 24px 20px 48px; }
-  .subtask-wrapper { padding: 14px 24px 20px 48px; }
   .subtask-header-title {
     font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase;
     color: var(--purple); letter-spacing: 0.5px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
@@ -258,7 +257,7 @@
   .subtask-table td { padding: 8px 10px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
   .subtask-table tr:last-child td { border-bottom: none; }
 
-  /* STATUS BADGE STYLE TRACKS */
+  /* STATUS BADGE */
   .badge {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
@@ -547,8 +546,490 @@
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-// ─── LOCAL STORAGE DATA ENGINE ───────────────────────────────────────────────
-let tasks = JSON.parse(localStorage.getItem('dev_tasks_data')) || [];
+// ─── LOCAL STORAGE DATA CORNERSTONE ENGINE & AUTOMATED MIGRATION LAYER ────────
+const permanentDataFailSafe = [
+  {
+    "id": 4001,
+    "assignDate": "2026-05-14",
+    "completionDate": "",
+    "member": "Raj Kale",
+    "type": "Backend",
+    "broker": "Hero Broker",
+    "title": "Godiigit PAYD",
+    "status": "In Progress",
+    "dueTime": "2026-06-02",
+    "pct": 40,
+    "notes": "",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4002,
+    "assignDate": "2026-05-14",
+    "completionDate": "",
+    "member": "Sayali Patil",
+    "type": "Backend",
+    "broker": "Hero Broker",
+    "title": "FG Renewal Integration for Hero Broker",
+    "status": "In Progress",
+    "dueTime": "2026-05-04",
+    "pct": 10,
+    "notes": "Addon changes in progress",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4003,
+    "assignDate": "2026-05-14",
+    "completionDate": "",
+    "member": "Gouresh Baraskar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Production support for all brokers",
+    "status": "In Progress",
+    "dueTime": "",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 8001,
+        "title": "Production support for all brokers",
+        "member": "Gouresh Baraskar",
+        "status": "On Leave",
+        "assignDate": "2026-05-14",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4004,
+    "assignDate": "2026-05-22",
+    "completionDate": "",
+    "member": "Ahmed Raza Idrisi",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Own Renewal and Market Renewal changes",
+    "status": "In Progress",
+    "dueTime": "2026-05-30",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 8002,
+        "title": "Deliverable Core Execution Base",
+        "member": "Ahmed Raza Idrisi",
+        "status": "To Do",
+        "assignDate": "2026-05-29",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4005,
+    "assignDate": "2026-05-18",
+    "completionDate": "",
+    "member": "Dusmanta Naidu",
+    "type": "Backend",
+    "broker": "EDME",
+    "title": "IKF-EDME<>Partner Requirement<>Theme change",
+    "status": "In Progress",
+    "dueTime": "2026-06-01",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 8003,
+        "title": "Deliverable Core Execution Base",
+        "member": "Dusmanta Naidu",
+        "status": "To Do",
+        "assignDate": "2026-05-29",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4006,
+    "assignDate": "2026-05-28",
+    "completionDate": "",
+    "member": "Praveen Kumar Sharma",
+    "type": "Backend",
+    "broker": "All Broker",
+    "title": "Quote checksum logic improvement #40374",
+    "status": "In Progress",
+    "dueTime": "2026-06-03",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 8004,
+        "title": "Deliverable Core Execution Base",
+        "member": "Praveen Kumar Sharma",
+        "status": "To Do",
+        "assignDate": "2026-05-29",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4007,
+    "assignDate": "2026-05-30",
+    "completionDate": "",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "Paytm",
+    "title": "Paytm security issues - 29/05/2026 #40410",
+    "status": "In Progress",
+    "dueTime": "2026-06-03",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4008,
+    "assignDate": "2026-05-30",
+    "completionDate": "",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "ALL Brokers",
+    "title": "BCL<>SBI<>UAT<>GCV<>INTGERATION |  #38882",
+    "status": "In Progress",
+    "dueTime": "2026-06-01",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4009,
+    "assignDate": "2026-06-01",
+    "completionDate": "",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Call centre Disposition mongo push",
+    "status": "In Progress",
+    "dueTime": "2026-05-27",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4010,
+    "assignDate": "2026-06-01",
+    "completionDate": "",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "IPPB",
+    "title": "IPPB<>Bajaj<>Rest service integration |  #39337",
+    "status": "In Progress",
+    "dueTime": "2026-06-01",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4011,
+    "assignDate": "2026-06-01",
+    "completionDate": "",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "All Broker <> Motor <> Brocore Commission Token API Integration. #40424",
+    "status": "In Progress",
+    "dueTime": "2006-06-02",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4012,
+    "assignDate": "2026-06-01",
+    "completionDate": "",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "Jainam",
+    "title": "Jainam <> UAT <> Communication Module setup. |  #40412",
+    "status": "In Progress",
+    "dueTime": "2026-06-01",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 8005,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Pradeep Parihar",
+        "status": "To Do",
+        "assignDate": "2026-06-01",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4013,
+    "assignDate": "2026-06-01",
+    "completionDate": "",
+    "member": "Aniket Mahadev Magadum",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Code Review  | AU Deployment process setup",
+    "status": "In Progress",
+    "dueTime": "2026-05-30",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 8006,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Aniket Mahadev Magadum",
+        "status": "To Do",
+        "assignDate": "2026-06-01",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4014,
+    "assignDate": "2026-05-22",
+    "completionDate": "",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "SFDC - TATA integration  | GIT ID - 443",
+    "status": "On Hold",
+    "dueTime": "2026-05-28",
+    "pct": 0,
+    "notes": "Development completed but UAT is down",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4015,
+    "assignDate": "2026-05-25",
+    "completionDate": "2026-05-28",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "TATA Renewal  | Upsclae and Down Scale changes as per the Plan",
+    "status": "Done",
+    "dueTime": "2026-05-25",
+    "pct": 100,
+    "notes": "Deployment pending",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4016,
+    "assignDate": "2026-05-27",
+    "completionDate": "",
+    "member": "Aniket Mahadev Magadum",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Call centre Disposition | SFDC Changes  | Aspec evidence",
+    "status": "On Hold",
+    "dueTime": "2026-05-27",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4017,
+    "assignDate": "2026-05-26",
+    "completionDate": "",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Call Centre integration Git ID 724",
+    "status": "On Hold",
+    "dueTime": "2026-05-29",
+    "pct": 0,
+    "notes": "API changes done",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4018,
+    "assignDate": "2026-05-28",
+    "completionDate": "2026-05-28",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "BIKE IDV changes",
+    "status": "Done",
+    "dueTime": "2026-05-28",
+    "pct": 100,
+    "notes": "Deployment pending",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4019,
+    "assignDate": "2026-05-29",
+    "completionDate": "2026-05-30",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU<>Dashboard<>Failure data incorrect for renewal |  #727",
+    "status": "Done",
+    "dueTime": "2026-05-30",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4020,
+    "assignDate": "2026-05-29",
+    "completionDate": "2026-06-01",
+    "member": "Aniket Mahadev Magadum",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Working on Chola Renewal",
+    "status": "Done",
+    "dueTime": "2026-05-30",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 8007,
+        "title": "Deliverable Core Execution Base",
+        "member": "Aniket Mahadev Magadum",
+        "status": "Done",
+        "assignDate": "2026-05-29",
+        "completionDate": "2026-06-01",
+        "logs": []
+      }
+    ],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4021,
+    "assignDate": "2026-05-30",
+    "completionDate": "2026-06-01",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Previous IC dropdown issue. |  #729",
+    "status": "Done",
+    "dueTime": "2026-05-30",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 8008,
+        "title": "Deliverable Core Execution Base",
+        "member": "Nikhil Yelgaonkar",
+        "status": "Done",
+        "assignDate": "2026-05-30",
+        "completionDate": "2026-06-01",
+        "logs": []
+      }
+    ],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4022,
+    "assignDate": "2026-05-30",
+    "completionDate": "2026-06-01",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU<>Endpoint URL changes |  #730",
+    "status": "Done",
+    "dueTime": "2026-05-30",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4023,
+    "assignDate": "2026-06-01",
+    "completionDate": "",
+    "member": "Aniket Mahadev Magadum",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Code Review  | AU Deployment process setup",
+    "status": "In Progress",
+    "dueTime": "2026-05-30",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 8009,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Aniket Mahadev Magadum",
+        "status": "To Do",
+        "assignDate": "2026-06-01",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4024,
+    "assignDate": "2026-06-01",
+    "completionDate": "",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU-ICICI<>MISD<>Testing<>End-to-End |  #490",
+    "status": "In Progress",
+    "dueTime": "2026-06-03",
+    "pct": 0,
+    "notes": "Deployment pending",
+    "subTasks": [
+      {
+        "id": 8010,
+        "title": "Deliverable Core Execution Base",
+        "member": "Nikhil Yelgaonkar",
+        "status": "To Do",
+        "assignDate": "2026-06-01",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  },
+  {
+    "id": 4025,
+    "assignDate": "2026-06-01",
+    "completionDate": "",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU <> COMMUNICATION <> EMAIL <> ERRORS |  #731",
+    "status": "In Progress",
+    "dueTime": "2026-06-01",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [],
+    "logs": [{"timestamp": "02/06/2026, 11:00:00 AM", "description": "Cleaned data restored successfully without duplicates."}]
+  }
+];
+
+let tasks = JSON.parse(localStorage.getItem('dev_tasks_data'));
+if (!tasks || tasks.length === 0) {
+  tasks = permanentDataFailSafe;
+  localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
+}
 
 let updatedMigration = false;
 tasks = tasks.map(t => {
@@ -558,7 +1039,7 @@ tasks = tasks.map(t => {
       id: Math.floor(Math.random() * 1000000),
       title: t.title || 'Base Deliverable Implementation',
       member: t.member || 'Unassigned',
-      status: t.status || 'In Progress',
+      status: t.status || 'To Do',
       assignDate: t.assignDate || new Date().toISOString().split('T')[0],
       completionDate: t.status === 'Done' ? new Date().toISOString().split('T')[0] : '',
       logs: []
@@ -1022,6 +1503,7 @@ function addBlankSubtaskFormRow(title = '', member = '', status = 'To Do', assig
   container.appendChild(div);
 }
 
+// ─── DYNAMIC FORM ENCODER HELPER ───────────────────────────────────────────
 function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
