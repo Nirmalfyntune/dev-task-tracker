@@ -1082,7 +1082,7 @@ function saveToLocalStorage() {
   localStorage.setItem('dev_tasks_next_id', nextId);
   
   // Real-time asynchronous payload pipeline deployment up to cloud server rows
-  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "YOUR_PASTED_WEB_APP_URL_HERE") {
+  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "https://script.google.com/macros/s/AKfycbz872l6FjRiT84nyC1bWwFU7Nmw5rePbk92iyION4pelzn6dnTtEx3dISRLuj84SNVZ/exec") {
     fetch(GOOGLE_DATABASE_URL, {
       method: "POST",
       mode: "no-cors",
