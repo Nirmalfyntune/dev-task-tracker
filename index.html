@@ -1081,7 +1081,7 @@ function saveToLocalStorage() {
   localStorage.setItem('dev_tasks_next_id', nextId);
   
   // FIXED safety verification mapping check statement
-  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "YOUR_PASTED_WEB_APP_URL_HERE") {
+  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "https://script.google.com/macros/s/AKfycbz872l6FjRiT84nyC1bWwFU7Nmw5rePbk92iyION4pelzn6dnTtEx3dISRLuj84SNVZ/exec") {
     fetch(GOOGLE_DATABASE_URL, {
       method: "POST",
       mode: "no-cors",
@@ -1775,7 +1775,7 @@ document.body.classList.add('role-' + currentRole.toLowerCase());
 
 // ─── OPTIMIZED BACKGROUND API RETRIEVAL BOOT ENGINE ──────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "YOUR_PASTED_WEB_APP_URL_HERE") {
+  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "https://script.google.com/macros/s/AKfycbz872l6FjRiT84nyC1bWwFU7Nmw5rePbk92iyION4pelzn6dnTtEx3dISRLuj84SNVZ/exec") {
     
     // Append an explicit JSON redirect parameter to bypass browser sandbox blocks
     const targetFetchUrl = GOOGLE_DATABASE_URL + (GOOGLE_DATABASE_URL.includes('?') ? '&' : '?') + 'callback=callback';
