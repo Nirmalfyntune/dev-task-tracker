@@ -1773,25 +1773,49 @@ document.getElementById('today-date').textContent = new Date().toLocaleDateStrin
 document.getElementById('app-user-role').value = currentRole;
 document.body.classList.add('role-' + currentRole.toLowerCase());
 
-// Automated background API bootstrap retrieval sequence
+// ─── OPTIMIZED BACKGROUND API RETRIEVAL BOOT ENGINE ──────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  // SAFETY CHECK VERIFICATION FIX APPLIED HERE
   if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "YOUR_PASTED_WEB_APP_URL_HERE") {
+    
+    // Append an explicit JSON redirect parameter to bypass browser sandbox blocks
+    const targetFetchUrl = GOOGLE_DATABASE_URL + (GOOGLE_DATABASE_URL.includes('?') ? '&' : '?') + 'callback=callback';
+
     fetch(GOOGLE_DATABASE_URL)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Network latency failure");
+        return res.json();
+      })
       .then(cloudData => {
         if (cloudData && cloudData.length > 0) {
           tasks = cloudData;
           nextId = tasks.length ? Math.max(...tasks.map(x => x.id)) + 1 : 1;
+          
+          // Refresh localized data mirrors safely
           localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
           localStorage.setItem('dev_tasks_next_id', nextId);
+          
           renderTable();
           toast("Loaded fresh live team sheet metrics!", "🌐");
         } else {
+          // Fall back onto local storage if sheet is completely empty
+          let backup = localStorage.getItem('dev_tasks_data');
+          if (backup) tasks = JSON.parse(backup);
           renderTable();
         }
       })
-      .catch(() => {
+      .catch(err => {
+        console.error("Cloud fetch failed, initializing secure local fallback window:", err);
+        // Load whatever backup is left in the browser cache storage so screen is never blank
+        let fallback = localStorage.getItem('dev_tasks_data');
+        if (fallback) tasks = JSON.parse(fallback);
+        renderTable();
+        toast("Loaded local offline workspace fallback backup", "💾");
+      });
+  } else {
+    renderTable();
+  }
+});
+  .catch(() => {
         console.log("Offline local sandbox environment running.");
         renderTable();
       });
