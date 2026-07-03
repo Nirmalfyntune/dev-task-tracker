@@ -546,10 +546,6 @@
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-// ─── CLOUD DATABASE ROUTING PARAMETERS ───────────────────────────────────────
-// Paste your long Google Web App link macro deployment URL exactly inside these quotes!
-const GOOGLE_DATABASE_URL = "https://script.google.com/macros/s/AKfycbz872l6FjRiT84nyC1bWwFU7Nmw5rePbk92iyION4pelzn6dnTtEx3dISRLuj84SNVZ/exec";
-
 // ─── LOCAL STORAGE DATA CORNERSTONE ENGINE & AUTOMATED MIGRATION LAYER ────────
 const permanentDataFailSafe = [
   {
@@ -1077,11 +1073,12 @@ let expandedTaskIds = new Set();
 
 // ─── SYNCHRONIZED STORAGE SYSTEM WITH GOOGLE SHEET API CLOUD ROUTER ──────────
 function saveToLocalStorage() {
+  // Update internal offline data buffer mirrors
   localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
   localStorage.setItem('dev_tasks_next_id', nextId);
   
-  // FIXED safety verification mapping check statement
-  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "https://script.google.com/macros/s/AKfycbz872l6FjRiT84nyC1bWwFU7Nmw5rePbk92iyION4pelzn6dnTtEx3dISRLuj84SNVZ/exec") {
+  // Real-time asynchronous payload pipeline deployment up to cloud server rows
+  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "YOUR_PASTED_WEB_APP_URL_HERE") {
     fetch(GOOGLE_DATABASE_URL, {
       method: "POST",
       mode: "no-cors",
@@ -1775,14 +1772,10 @@ document.body.classList.add('role-' + currentRole.toLowerCase());
 
 // ─── OPTIMIZED BACKGROUND API RETRIEVAL BOOT ENGINE ──────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "https://script.google.com/macros/s/AKfycbz872l6FjRiT84nyC1bWwFU7Nmw5rePbk92iyION4pelzn6dnTtEx3dISRLuj84SNVZ/exec") {
-    
-    // Append an explicit JSON redirect parameter to bypass browser sandbox blocks
-    const targetFetchUrl = GOOGLE_DATABASE_URL + (GOOGLE_DATABASE_URL.includes('?') ? '&' : '?') + 'callback=callback';
-
+  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "YOUR_PASTED_WEB_APP_URL_HERE") {
     fetch(GOOGLE_DATABASE_URL)
       .then(res => {
-        if (!res.ok) throw new Error("Network latency failure");
+        if (!res.ok) throw new Error("Network response error");
         return res.json();
       })
       .then(cloudData => {
@@ -1790,33 +1783,21 @@ window.addEventListener('DOMContentLoaded', () => {
           tasks = cloudData;
           nextId = tasks.length ? Math.max(...tasks.map(x => x.id)) + 1 : 1;
           
-          // Refresh localized data mirrors safely
           localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
           localStorage.setItem('dev_tasks_next_id', nextId);
           
           renderTable();
           toast("Loaded fresh live team sheet metrics!", "🌐");
         } else {
-          // Fall back onto local storage if sheet is completely empty
           let backup = localStorage.getItem('dev_tasks_data');
           if (backup) tasks = JSON.parse(backup);
           renderTable();
         }
       })
       .catch(err => {
-        console.error("Cloud fetch failed, initializing secure local fallback window:", err);
-        // Load whatever backup is left in the browser cache storage so screen is never blank
+        console.error("Cloud fetch failed, using local storage mirror:", err);
         let fallback = localStorage.getItem('dev_tasks_data');
         if (fallback) tasks = JSON.parse(fallback);
-        renderTable();
-        toast("Loaded local offline workspace fallback backup", "💾");
-      });
-  } else {
-    renderTable();
-  }
-});
-  .catch(() => {
-        console.log("Offline local sandbox environment running.");
         renderTable();
       });
   } else {
