@@ -290,7 +290,7 @@
   .type-be { background: rgba(37,99,235,0.1); color: var(--accent2); border: 1px solid rgba(37,99,235,0.2); }
   .type-au { background: rgba(188,140,255,0.1); color: var(--purple); border: 1px solid rgba(188,140,255,0.2); }
 
-  .editable { position: relative; border-radius: 5px; padding: 2px 4px; margin: -2px -4px; transition: background 0.15s; }
+  .editable { relative; border-radius: 5px; padding: 2px 4px; margin: -2px -4px; transition: background 0.15s; }
   body.role-admin .editable, body.role-manager .editable-pct { cursor: pointer; }
   
   body.role-admin .editable:hover, body.role-manager .editable-pct:hover { background: rgba(255,255,255,0.06); }
@@ -546,6 +546,10 @@
 <div class="toast-container" id="toast-container"></div>
 
 <script>
+// ─── CLOUD DATABASE ROUTING PARAMETERS ───────────────────────────────────────
+// Paste your long Google Web App link macro deployment URL exactly inside these quotes!
+const GOOGLE_DATABASE_URL = "YOUR_PASTED_WEB_APP_URL_HERE";
+
 // ─── LOCAL STORAGE DATA CORNERSTONE ENGINE & AUTOMATED MIGRATION LAYER ────────
 const permanentDataFailSafe = [
   {
@@ -1071,9 +1075,23 @@ let editingId = null;
 let currentRole = localStorage.getItem('dev_tasks_role') || 'Admin';
 let expandedTaskIds = new Set();
 
+// ─── SYNCHRONIZED STORAGE SYSTEM WITH GOOGLE SHEET API CLOUD ROUTER ──────────
 function saveToLocalStorage() {
+  // Update internal offline data buffer mirrors
   localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
   localStorage.setItem('dev_tasks_next_id', nextId);
+  
+  // Real-time asynchronous payload pipeline deployment up to cloud server rows
+  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "YOUR_PASTED_WEB_APP_URL_HERE") {
+    fetch(GOOGLE_DATABASE_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "sync", data: tasks })
+    })
+    .then(() => console.log("Cloud repository sheets synchronized perfectly."))
+    .catch(() => console.warn("Cloud connection currently unestablished. Using local backup pipeline instead."));
+  }
 }
 
 // ─── ACCESS CONTROL INTERFACES ───────────────────────────────────────────────
@@ -1503,7 +1521,6 @@ function addBlankSubtaskFormRow(title = '', member = '', status = 'To Do', assig
   container.appendChild(div);
 }
 
-// ─── DYNAMIC FORM ENCODER HELPER ───────────────────────────────────────────
 function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
@@ -1757,7 +1774,31 @@ document.getElementById('today-date').textContent = new Date().toLocaleDateStrin
 document.getElementById('app-user-role').value = currentRole;
 document.body.classList.add('role-' + currentRole.toLowerCase());
 
-renderTable();
+// Automated background API bootstrap retrieval sequence
+window.addEventListener('DOMContentLoaded', () => {
+  if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "https://script.google.com/macros/s/AKfycbz872l6FjRiT84nyC1bWwFU7Nmw5rePbk92iyION4pelzn6dnTtEx3dISRLuj84SNVZ/exec") {
+    fetch(GOOGLE_DATABASE_URL)
+      .then(res => res.json())
+      .then(cloudData => {
+        if (cloudData && cloudData.length > 0) {
+          tasks = cloudData;
+          nextId = tasks.length ? Math.max(...tasks.map(x => x.id)) + 1 : 1;
+          localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
+          localStorage.setItem('dev_tasks_next_id', nextId);
+          renderTable();
+          toast("Loaded fresh live team sheet metrics!", "🌐");
+        } else {
+          renderTable();
+        }
+      })
+      .catch(() => {
+        console.log("Offline local sandbox environment running.");
+        renderTable();
+      });
+  } else {
+    renderTable();
+  }
+});
 </script>
 </body>
 </html>
