@@ -3131,7 +3131,10 @@ const getPctColor = p => p >= 80 ? '#3fb950' : p >= 40 ? '#d29922' : '#f0883e';
 const statusClass = s => ({ 'To Do':'to-do', 'In Progress':'in-progress','Done':'done','On Leave':'on-leave','Blocked':'blocked','On Hold':'on-hold','Raise to IC':'raise-ic','Raise to Broker':'raise-broker' }[s] || 'in-progress');
 const typeClass = t => ({ 'Backend':'type-be','AU Backend':'type-au','Frontend':'type-fe' }[t] || 'type-be');
 const typeLabel = t => ({ 'Backend':'⚙ Backend','AU Backend':'🔷 AU Backend','Frontend':'🖥 Frontend' }[t] || t);
-const fmtDate = d => d ? d.split('-').reverse().join('.') : '';
+const fmtDate = d => {
+  if (!d) return '';
+  return d.split('T')[0].split('-').reverse().join('.');
+};
 
 function toast(msg, type='✅') {
   const c = document.getElementById('toast-container');
@@ -3805,7 +3808,19 @@ window.addEventListener('DOMContentLoaded', () => {
       })
       .then(cloudData => {
         if (cloudData && cloudData.length > 0) {
-          tasks = cloudData;
+          // Strip out the extra timestamp 'T00:00:00.000Z' junk from Google Sheets
+          tasks = cloudData.map(t => {
+            if (t.assignDate) t.assignDate = t.assignDate.split('T')[0];
+            if (t.completionDate) t.completionDate = t.completionDate.split('T')[0];
+            if (t.dueTime) t.dueTime = t.dueTime.split('T')[0];
+            if (t.subTasks) {
+              t.subTasks.forEach(st => {
+                if (st.assignDate) st.assignDate = st.assignDate.split('T')[0];
+                if (st.completionDate) st.completionDate = st.completionDate.split('T')[0];
+              });
+            }
+            return t;
+          });
           nextId = tasks.length ? Math.max(...tasks.map(x => x.id)) + 1 : 1;
           
           localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
