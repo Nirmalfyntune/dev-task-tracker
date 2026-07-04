@@ -550,7 +550,2548 @@
 const GOOGLE_DATABASE_URL = "https://script.google.com/macros/s/AKfycbz872l6FjRiT84nyC1bWwFU7Nmw5rePbk92iyION4pelzn6dnTtEx3dISRLuj84SNVZ/exec";
 
 // ─── LOCAL STORAGE DATA CORNERSTONE ENGINE & AUTOMATED MIGRATION LAYER ────────
-let tasks = JSON.parse(localStorage.getItem('dev_tasks_data')) || [];
+const permanentDataFailSafe = [
+  {
+    "id": 8001,
+    "assignDate": "2026-06-09",
+    "completionDate": "",
+    "member": "Raj Kale",
+    "type": "Backend",
+    "broker": "Hero Broker",
+    "title": "Hero<>Shriram<>Renewal integration |  #40543",
+    "status": "In Progress",
+    "dueTime": "2026-07-03",
+    "pct": 40,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12001,
+        "title": "Deliverable Core Execution Base",
+        "member": "Raj Kale",
+        "status": "To Do",
+        "assignDate": "2026-06-09",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8002,
+    "assignDate": "2026-05-14",
+    "completionDate": "",
+    "member": "Sayali Patil",
+    "type": "Backend",
+    "broker": "Hero",
+    "title": "FG Renewal Integration for Hero Broker",
+    "status": "Raise to IC",
+    "dueTime": "2026-07-02",
+    "pct": 10,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12002,
+        "title": "Deliverable Core Execution Base",
+        "member": "Sayali Patil",
+        "status": "To Do",
+        "assignDate": "2026-06-10",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8003,
+    "assignDate": "2026-05-14",
+    "completionDate": "",
+    "member": "Gouresh Baraskar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Production support for all brokers",
+    "status": "On Hold",
+    "dueTime": "",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12003,
+        "title": "Production support for all brokers",
+        "member": "Gouresh Baraskar",
+        "status": "On Leave",
+        "assignDate": "2026-05-14",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8004,
+    "assignDate": "2026-06-03",
+    "completionDate": "2026-06-16",
+    "member": "Ahmed Raza",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Own Renewal and Market Renewal changes",
+    "status": "Done",
+    "dueTime": "2026-06-15",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12004,
+        "title": "Deliverable Core Execution Base",
+        "member": "Ahmed Raza Idrisi",
+        "status": "Done",
+        "assignDate": "2026-05-29",
+        "completionDate": "2026-06-16",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8005,
+    "assignDate": "2026-05-18",
+    "completionDate": "2026-06-05",
+    "member": "Dusmanta Naidu",
+    "type": "Backend",
+    "broker": "EDME",
+    "title": "IKF-EDME<>Partner Requirement<>Theme change",
+    "status": "Done",
+    "dueTime": "2026-06-04",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12005,
+        "title": "Deliverable Core Execution Base",
+        "member": "Dusmanta Naidu",
+        "status": "Done",
+        "assignDate": "2026-05-29",
+        "completionDate": "2026-06-05",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8006,
+    "assignDate": "2026-05-28",
+    "completionDate": "2026-06-11",
+    "member": "Praveen Kumar Sharma",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Quote checksum logic improvement #40374",
+    "status": "Done",
+    "dueTime": "2026-06-10",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12006,
+        "title": "Deliverable Core Execution Base",
+        "member": "Praveen Kumar Sharma",
+        "status": "Done",
+        "assignDate": "2026-05-29",
+        "completionDate": "2026-06-11",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8007,
+    "assignDate": "2026-05-30",
+    "completionDate": "2026-06-04",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "Paytm",
+    "title": "Paytm security issues - 29/05/2026 #40410",
+    "status": "Done",
+    "dueTime": "2026-06-03",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8008,
+    "assignDate": "2026-05-30",
+    "completionDate": "2026-06-04",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "BCL<>SBI<>UAT<>GCV<>INTGERATION |  #38882",
+    "status": "Done",
+    "dueTime": "2026-06-03",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12007,
+        "title": "Deliverable Core Execution Base",
+        "member": "Pradeep Parihar",
+        "status": "Done",
+        "assignDate": "2026-06-02",
+        "completionDate": "2026-06-04",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8009,
+    "assignDate": "2026-06-01",
+    "completionDate": "2026-06-02",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Call centre Disposition mongo push",
+    "status": "Done",
+    "dueTime": "2026-06-03",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12008,
+        "title": "Deliverable Core Execution Base",
+        "member": "Aniket Kamble",
+        "status": "Done",
+        "assignDate": "2026-06-02",
+        "completionDate": "2026-06-02",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8010,
+    "assignDate": "2026-06-01",
+    "completionDate": "2026-06-03",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "IPPB",
+    "title": "IPPB<>Bajaj<>Rest service integration |  #39337",
+    "status": "Done",
+    "dueTime": "2026-06-01",
+    "pct": 100,
+    "notes": "Break -in issue added",
+    "subTasks": [],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8011,
+    "assignDate": "2026-06-01",
+    "completionDate": "2026-06-05",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "All Broker <> Motor <> Brocore Commission Token API Integration. #40424",
+    "status": "Done",
+    "dueTime": "2006-06-04",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12009,
+        "title": "Deliverable Core Execution Base",
+        "member": "Joel Dcunha",
+        "status": "Done",
+        "assignDate": "2026-06-04",
+        "completionDate": "2026-06-05",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8012,
+    "assignDate": "2026-06-02",
+    "completionDate": "2026-06-04",
+    "member": "Sayali Patil",
+    "type": "Backend",
+    "broker": "Jainam",
+    "title": "Jainam <> UAT <> Communication Module setup. |  #40412",
+    "status": "Done",
+    "dueTime": "2026-06-03",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12010,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Pradeep Parihar",
+        "status": "Done",
+        "assignDate": "2026-06-01",
+        "completionDate": "2026-06-03",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8013,
+    "assignDate": "2026-05-22",
+    "completionDate": "",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "SFDC - TATA integration  | GIT ID - 443",
+    "status": "On Hold",
+    "dueTime": "2026-05-28",
+    "pct": 0,
+    "notes": "Development completed but UAT is down",
+    "subTasks": [],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8014,
+    "assignDate": "2026-06-18",
+    "completionDate": "2026-06-22",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "MR renewal observation and MR date related business logic  | Production Issue",
+    "status": "Done",
+    "dueTime": "2026-06-22",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12011,
+        "title": "Deliverable Core Execution Base",
+        "member": "Nikhil Yelgaonkar",
+        "status": "Done",
+        "assignDate": "2026-06-18",
+        "completionDate": "2026-06-22",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8015,
+    "assignDate": "2026-05-27",
+    "completionDate": "",
+    "member": "Aniket Mahadev Magadum",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Call centre Disposition | SFDC Changes  | Aspec evidence",
+    "status": "On Hold",
+    "dueTime": "2026-05-27",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8016,
+    "assignDate": "2026-05-26",
+    "completionDate": "",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Call Centre integration Git ID 724",
+    "status": "On Hold",
+    "dueTime": "2026-05-29",
+    "pct": 0,
+    "notes": "API changes done",
+    "subTasks": [],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8017,
+    "assignDate": "2026-05-28",
+    "completionDate": "2026-05-28",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "BIKE IDV changes",
+    "status": "Done",
+    "dueTime": "2026-05-28",
+    "pct": 100,
+    "notes": "Deployment pending",
+    "subTasks": [],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8018,
+    "assignDate": "2026-05-29",
+    "completionDate": "2026-05-30",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU<>Dashboard<>Failure data incorrect for renewal |  #727",
+    "status": "Done",
+    "dueTime": "2026-05-30",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8019,
+    "assignDate": "2026-05-29",
+    "completionDate": "2026-06-01",
+    "member": "Aniket Mahadev Magadum",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Working on Chola Renewal",
+    "status": "Done",
+    "dueTime": "2026-05-30",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12012,
+        "title": "Deliverable Core Execution Base",
+        "member": "Aniket Mahadev Magadum",
+        "status": "Done",
+        "assignDate": "2026-05-29",
+        "completionDate": "2026-06-01",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8020,
+    "assignDate": "2026-05-30",
+    "completionDate": "2026-06-01",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Previous IC dropdown issue. |  #729",
+    "status": "Done",
+    "dueTime": "2026-05-30",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12013,
+        "title": "Deliverable Core Execution Base",
+        "member": "Nikhil Yelgaonkar",
+        "status": "Done",
+        "assignDate": "2026-05-30",
+        "completionDate": "2026-06-01",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8021,
+    "assignDate": "2026-05-30",
+    "completionDate": "2026-06-01",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU<>Endpoint URL changes |  #730",
+    "status": "Done",
+    "dueTime": "2026-05-30",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8022,
+    "assignDate": "2026-06-01",
+    "completionDate": "2026-06-22",
+    "member": "Aniket Mahadev Magadum",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Code Review  | Fixing MMV on UAT and Production",
+    "status": "Done",
+    "dueTime": "2026-06-16",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12014,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Aniket Mahadev Magadum",
+        "status": "Done",
+        "assignDate": "2026-06-01",
+        "completionDate": "2026-06-22",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8023,
+    "assignDate": "2026-06-01",
+    "completionDate": "2026-06-03",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU-ICICI<>MISD<>Testing<>End-to-End |  #490",
+    "status": "Done",
+    "dueTime": "2026-06-03",
+    "pct": 100,
+    "notes": "Deployment pending",
+    "subTasks": [
+      {
+        "id": 12015,
+        "title": "Deliverable Core Execution Base",
+        "member": "Nikhil Yelgaonkar",
+        "status": "Done",
+        "assignDate": "2026-06-01",
+        "completionDate": "2026-06-03",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8024,
+    "assignDate": "2026-06-01",
+    "completionDate": "",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU <> COMMUNICATION <> EMAIL <> ERRORS |  #731",
+    "status": "Raise to Broker",
+    "dueTime": "2026-06-02",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12016,
+        "title": "Deliverable Core Execution Base",
+        "member": "Nikhil Yelgaonkar",
+        "status": "To Do",
+        "assignDate": "2026-06-02",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8025,
+    "assignDate": "2026-06-02",
+    "completionDate": "",
+    "member": "Raj Kale",
+    "type": "Backend",
+    "broker": "Hero Broker",
+    "title": "godigit renwal integration git id - 40089",
+    "status": "Raise to IC",
+    "dueTime": "2026-06-10",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12017,
+        "title": "Deliverable Core Execution Base",
+        "member": "Raj Kale",
+        "status": "To Do",
+        "assignDate": "2026-06-02",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8026,
+    "assignDate": "2026-06-02",
+    "completionDate": "",
+    "member": "Sayali Patil",
+    "type": "Backend",
+    "broker": "Hero Broker",
+    "title": "BCl-Log -Veiwer Issues Production (fix on UAT) |  #40442 | Hero-Log-Viewer-Issues-Prod(Fix-On UAT) |  #40443",
+    "status": "On Hold",
+    "dueTime": "2026-06-06",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12018,
+        "title": "Deliverable Core Execution Base",
+        "member": "Sayali Patil",
+        "status": "To Do",
+        "assignDate": "2026-06-02",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8027,
+    "assignDate": "2026-06-03",
+    "completionDate": "2026-06-03",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "BCL<>VALIDATE TOKEN API UPDATE |  #4045",
+    "status": "Done",
+    "dueTime": "2026-06-03",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12019,
+        "title": "Production support for all brokers (Clone)",
+        "member": "Gouresh Baraskar",
+        "status": "Done",
+        "assignDate": "2026-06-03",
+        "completionDate": "2026-06-03",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8028,
+    "assignDate": "2026-06-03",
+    "completionDate": "2026-06-05",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Manual Payment Transfer Handling |  #737",
+    "status": "Done",
+    "dueTime": "2026-06-04",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12020,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Aniket Mahadev Magadum",
+        "status": "Done",
+        "assignDate": "2026-06-03",
+        "completionDate": "2026-06-04",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8029,
+    "assignDate": "2026-06-04",
+    "completionDate": "2026-06-06",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU <> Vahaan API <> Multiple Application |  #741",
+    "status": "Done",
+    "dueTime": "2026-06-05",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12021,
+        "title": "Deliverable Core Execution Base (Clone) (Clone)",
+        "member": "Aniket Mahadev Magadum",
+        "status": "Done",
+        "assignDate": "2026-06-03",
+        "completionDate": "2026-06-06",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8030,
+    "assignDate": "2026-06-03",
+    "completionDate": "2026-06-08",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Motor <> All Product <> All ICs <> Remove PUC related fields in proposal based on puc config. |  #40468",
+    "status": "Done",
+    "dueTime": "2026-06-05",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12022,
+        "title": "Production support for all brokers (Clone) (Clone)",
+        "member": "Gouresh Baraskar",
+        "status": "Done",
+        "assignDate": "2026-06-03",
+        "completionDate": "2026-06-08",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8031,
+    "assignDate": "2026-06-04",
+    "completionDate": "2026-06-05",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Jainam <> Liberty <> UAT <> Enable pre-payment OTP pop-up for liberty.",
+    "status": "Done",
+    "dueTime": "2026-06-04",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12023,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Pradeep Parihar",
+        "status": "Done",
+        "assignDate": "2026-06-04",
+        "completionDate": "2026-06-05",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8032,
+    "assignDate": "2026-06-04",
+    "completionDate": "2026-06-05",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "New kyc changes lgi #40458 => Expected",
+    "status": "Done",
+    "dueTime": "2006-06-04",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12024,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Joel Dcunha",
+        "status": "Done",
+        "assignDate": "2026-06-04",
+        "completionDate": "2026-06-05",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8033,
+    "assignDate": "2026-06-04",
+    "completionDate": "2026-06-08",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Proposal failure visibility report - 2w - PAYTM #39727",
+    "status": "Done",
+    "dueTime": "2006-06-06",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12025,
+        "title": "Deliverable Core Execution Base (Clone) (Clone)",
+        "member": "Joel Dcunha",
+        "status": "Done",
+        "assignDate": "2026-06-04",
+        "completionDate": "2026-06-08",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8034,
+    "assignDate": "2026-06-04",
+    "completionDate": "2026-06-05",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Chola Unnamed passanger SI adjustment",
+    "status": "Done",
+    "dueTime": "2026-06-04",
+    "pct": 100,
+    "notes": "Deployment pending",
+    "subTasks": [
+      {
+        "id": 12026,
+        "title": "Deliverable Core Execution Base",
+        "member": "Nikhil Yelgaonkar",
+        "status": "Done",
+        "assignDate": "2026-06-04",
+        "completionDate": "2026-06-05",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8035,
+    "assignDate": "2026-06-04",
+    "completionDate": "",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Chola PDF issue in UAT",
+    "status": "Done",
+    "dueTime": "2026-06-04",
+    "pct": 0,
+    "notes": "Deployment pending",
+    "subTasks": [
+      {
+        "id": 12027,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Nikhil Yelgaonkar",
+        "status": "To Do",
+        "assignDate": "2026-06-04",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8036,
+    "assignDate": "2026-06-05",
+    "completionDate": "2026-06-06",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "ACE Prod - CRM Log list sepration |  #40477",
+    "status": "Done",
+    "dueTime": "2006-06-05",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12028,
+        "title": "Deliverable Core Execution Base (Clone) (Clone) (Clone)",
+        "member": "Joel Dcunha",
+        "status": "Done",
+        "assignDate": "2026-06-05",
+        "completionDate": "2026-06-06",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8037,
+    "assignDate": "2026-06-05",
+    "completionDate": "2026-06-10",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Jainam Email configuration",
+    "status": "Done",
+    "dueTime": "2026-06-09",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12029,
+        "title": "Deliverable Core Execution Base (Clone) (Clone)",
+        "member": "Pradeep Parihar",
+        "status": "Done",
+        "assignDate": "2026-06-05",
+        "completionDate": "2026-06-10",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8038,
+    "assignDate": "2026-06-05",
+    "completionDate": "",
+    "member": "Dusmanta Naidu",
+    "type": "Backend",
+    "broker": "Hero",
+    "title": "Hero<>Oriental<>New Kit Integration |  #40091 |  | UAT deployment",
+    "status": "In Progress",
+    "dueTime": "2026-07-10",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12030,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Dusmanta Naidu",
+        "status": "To Do",
+        "assignDate": "2026-06-05",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8039,
+    "assignDate": "2026-06-15",
+    "completionDate": "2026-06-18",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "SFDC call back API implementation",
+    "status": "Done",
+    "dueTime": "2026-06-17",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12031,
+        "title": "Deliverable Core Execution Base (Clone) (Clone) (Clone)",
+        "member": "Aniket Mahadev Magadum",
+        "status": "Done",
+        "assignDate": "2026-06-06",
+        "completionDate": "2026-06-18",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8040,
+    "assignDate": "2026-06-06",
+    "completionDate": "",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU abhijeet and Ops back",
+    "status": "On Hold",
+    "dueTime": "2026-06-08",
+    "pct": 0,
+    "notes": "Deployment pending",
+    "subTasks": [
+      {
+        "id": 12032,
+        "title": "Deliverable Core Execution Base",
+        "member": "Nikhil Yelgaonkar",
+        "status": "To Do",
+        "assignDate": "2026-06-06",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8041,
+    "assignDate": "2026-06-06",
+    "completionDate": "2026-06-09",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Quote visibility report empty fields - PAYTM- #40428",
+    "status": "Done",
+    "dueTime": "2006-06-08",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12033,
+        "title": "Deliverable Core Execution Base (Clone) (Clone) (Clone) (Clone)",
+        "member": "Joel Dcunha",
+        "status": "Done",
+        "assignDate": "2026-06-06",
+        "completionDate": "2026-06-09",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8042,
+    "assignDate": "2026-06-08",
+    "completionDate": "2026-06-09",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "IPPB<>Data not pushed in mongo |  #40518",
+    "status": "Done",
+    "dueTime": "2026-06-08",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12034,
+        "title": "Production support for all brokers (Clone) (Clone) (Clone)",
+        "member": "Gouresh Baraskar",
+        "status": "Done",
+        "assignDate": "2026-06-08",
+        "completionDate": "2026-06-09",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8043,
+    "assignDate": "2026-06-08",
+    "completionDate": "",
+    "member": "Dusmanta Naidu",
+    "type": "Backend",
+    "broker": "EDME",
+    "title": "EDME Proposal fields alignment issues",
+    "status": "On Hold",
+    "dueTime": "2026-06-09",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12035,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Dusmanta Naidu",
+        "status": "To Do",
+        "assignDate": "2026-06-08",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8044,
+    "assignDate": "2026-06-08",
+    "completionDate": "2026-06-11",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "BCL-Log -Veiwer Issues Production (fix on UAT) |  #40442 |  | API configuration setup",
+    "status": "Done",
+    "dueTime": "2026-06-10",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12036,
+        "title": "Deliverable Core Execution Base (Clone) (Clone)",
+        "member": "Pradeep Parihar",
+        "status": "Done",
+        "assignDate": "2026-06-08",
+        "completionDate": "2026-06-11",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8045,
+    "assignDate": "2026-06-15",
+    "completionDate": "2026-06-16",
+    "member": "Dusmanta Naidu",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Production support for all brokers |  | Kotak master patch update",
+    "status": "Done",
+    "dueTime": "2026-06-16",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12037,
+        "title": "Production support for all brokers (Clone)",
+        "member": "Dusmanta Naidu",
+        "status": "Done",
+        "assignDate": "2026-06-15",
+        "completionDate": "2026-06-16",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8046,
+    "assignDate": "2026-06-09",
+    "completionDate": "2026-06-10",
+    "member": "Sayali Patil",
+    "type": "Backend",
+    "broker": "Hero Broker",
+    "title": "godigit payment failure redirect URL mapping setup #40542",
+    "status": "Done",
+    "dueTime": "2026-06-09",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12038,
+        "title": "Deliverable Core Execution Base",
+        "member": "Sayali Patil",
+        "status": "Done",
+        "assignDate": "2026-06-09",
+        "completionDate": "2026-06-10",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8047,
+    "assignDate": "2026-06-10",
+    "completionDate": "2026-06-11",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Bh series implementation for Shriram along with new PG changes on UAT |  | Production Hotfix",
+    "status": "Done",
+    "dueTime": "2026-06-10",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12039,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Pradeep Parihar",
+        "status": "Done",
+        "assignDate": "2026-06-10",
+        "completionDate": "2026-06-11",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8048,
+    "assignDate": "2026-06-10",
+    "completionDate": "2026-06-16",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "IPPB",
+    "title": "IPPB master logs structure alignment patch #40562",
+    "status": "Done",
+    "dueTime": "2026-06-15",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12040,
+        "title": "Production support for all brokers (Clone)",
+        "member": "Rithvik Chavhan",
+        "status": "Done",
+        "assignDate": "2026-06-10",
+        "completionDate": "2026-06-16",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8049,
+    "assignDate": "2026-06-11",
+    "completionDate": "",
+    "member": "Sayali Patil",
+    "type": "Backend",
+    "broker": "Hero Broker",
+    "title": "Zuno motor integration structure blueprints setup #40578",
+    "status": "In Progress",
+    "dueTime": "2026-07-05",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12041,
+        "title": "Deliverable Core Execution Base",
+        "member": "Sayali Patil",
+        "status": "To Do",
+        "assignDate": "2026-06-11",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8050,
+    "assignDate": "2026-06-11",
+    "completionDate": "2026-06-15",
+    "member": "Aniket Mahadev Magadum",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Call Centre integration Git ID 724 |  | Exception handler updates",
+    "status": "Done",
+    "dueTime": "2026-06-12",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12042,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Aniket Mahadev Magadum",
+        "status": "Done",
+        "assignDate": "2026-06-11",
+        "completionDate": "2026-06-15",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8051,
+    "assignDate": "2026-06-12",
+    "completionDate": "2026-06-16",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Brocore commission token API database cleanup routines #40602",
+    "status": "Done",
+    "dueTime": "2026-06-15",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12043,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Joel Dcunha",
+        "status": "Done",
+        "assignDate": "2026-06-12",
+        "completionDate": "2026-06-16",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8052,
+    "assignDate": "2026-06-15",
+    "completionDate": "2026-06-16",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Production support for all brokers |  | Chola request payloads debugging",
+    "status": "Done",
+    "dueTime": "2026-06-15",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12044,
+        "title": "Production support for all brokers (Clone)",
+        "member": "Pradeep Parihar",
+        "status": "Done",
+        "assignDate": "2026-06-15",
+        "completionDate": "2026-06-16",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8053,
+    "assignDate": "2026-06-15",
+    "completionDate": "2026-06-17",
+    "member": "Praveen Kumar Sharma",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Quote checksum validation performance audit logs patch #40611",
+    "status": "Done",
+    "dueTime": "2026-06-17",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12045,
+        "title": "Deliverable Core Execution Base",
+        "member": "Praveen Kumar Sharma",
+        "status": "Done",
+        "assignDate": "2026-06-15",
+        "completionDate": "2026-06-17",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8054,
+    "assignDate": "2026-06-16",
+    "completionDate": "2026-06-18",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Production support for all brokers |  | Digit server latency checks",
+    "status": "Done",
+    "dueTime": "2026-06-17",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12046,
+        "title": "Production support for all brokers (Clone)",
+        "member": "Rithvik Chavhan",
+        "status": "Done",
+        "assignDate": "2026-06-16",
+        "completionDate": "2026-06-18",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8055,
+    "assignDate": "2026-06-16",
+    "completionDate": "2026-06-19",
+    "member": "Ahmed Raza",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Own Renewal matching metrics configuration adjustment #762",
+    "status": "Done",
+    "dueTime": "2026-06-18",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12047,
+        "title": "Deliverable Core Execution Base",
+        "member": "Ahmed Raza Idrisi",
+        "status": "Done",
+        "assignDate": "2026-06-16",
+        "completionDate": "2026-06-19",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8056,
+    "assignDate": "2026-06-17",
+    "completionDate": "2026-06-20",
+    "member": "Sayali Patil",
+    "type": "Backend",
+    "broker": "Jainam",
+    "title": "Jainam <> UAT <> Flow error tracking telemetry layers setup #40641",
+    "status": "Done",
+    "dueTime": "2026-06-19",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12048,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Sayali Patil",
+        "status": "Done",
+        "assignDate": "2026-06-17",
+        "completionDate": "2026-06-20",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8057,
+    "assignDate": "2026-06-17",
+    "completionDate": "2026-06-22",
+    "member": "Gouresh Baraskar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Production support for all brokers |  | UI grid overflow hotfix",
+    "status": "Done",
+    "dueTime": "2026-06-20",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12049,
+        "title": "Production support for all brokers (Clone)",
+        "member": "Gouresh Baraskar",
+        "status": "Done",
+        "assignDate": "2026-06-17",
+        "completionDate": "2026-06-22",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8058,
+    "assignDate": "2026-06-18",
+    "completionDate": "2026-06-23",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Jainam <> Liberty <> pre-payment validations patch update #40671",
+    "status": "Done",
+    "dueTime": "2026-06-22",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12050,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Pradeep Parihar",
+        "status": "Done",
+        "assignDate": "2026-06-18",
+        "completionDate": "2026-06-23",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8059,
+    "assignDate": "2026-06-18",
+    "completionDate": "2026-06-23",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "New kyc changes lgi validation mapping loops update #40683",
+    "status": "Done",
+    "dueTime": "2026-06-22",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12051,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Joel Dcunha",
+        "status": "Done",
+        "assignDate": "2026-06-18",
+        "completionDate": "2026-06-23",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8060,
+    "assignDate": "2026-06-19",
+    "completionDate": "2026-06-24",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Manual Payment Transfer Handling logs tracker module setup #774",
+    "status": "Done",
+    "dueTime": "2026-06-23",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12052,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Aniket Kamble",
+        "status": "Done",
+        "assignDate": "2026-06-19",
+        "completionDate": "2026-06-24",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8061,
+    "assignDate": "2026-06-19",
+    "completionDate": "",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Brocore Commission Token visibility framework routines #40711",
+    "status": "In Progress",
+    "dueTime": "2026-07-03",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12053,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Joel Dcunha",
+        "status": "To Do",
+        "assignDate": "2026-06-19",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8062,
+    "assignDate": "2026-06-22",
+    "completionDate": "",
+    "member": "Nikhil Yelgaonkar",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "Chola Unnamed passanger structural field overrides setup #782",
+    "status": "In Progress",
+    "dueTime": "2026-07-02",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12054,
+        "title": "Deliverable Core Execution Base",
+        "member": "Nikhil Yelgaonkar",
+        "status": "To Do",
+        "assignDate": "2026-06-22",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8063,
+    "assignDate": "2026-06-22",
+    "completionDate": "",
+    "member": "Aniket Mahadev Magadum",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU Deployment validation telemetry pipeline setup #784",
+    "status": "In Progress",
+    "dueTime": "2026-07-03",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12055,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Aniket Mahadev Magadum",
+        "status": "To Do",
+        "assignDate": "2026-06-22",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8064,
+    "assignDate": "2026-06-23",
+    "completionDate": "",
+    "member": "Sayali Patil",
+    "type": "Backend",
+    "broker": "Hero Broker",
+    "title": "godigit renewal edge-cases callback logic integration #40733",
+    "status": "In Progress",
+    "dueTime": "2026-07-01",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12056,
+        "title": "Deliverable Core Execution Base",
+        "member": "Sayali Patil",
+        "status": "To Do",
+        "assignDate": "2026-06-23",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8065,
+    "assignDate": "2026-06-23",
+    "completionDate": "",
+    "member": "Praveen Kumar Sharma",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Remove PUC selection dependency configurations from UI forms #40742",
+    "status": "In Progress",
+    "dueTime": "2026-06-30",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12057,
+        "title": "Deliverable Core Execution Base",
+        "member": "Praveen Kumar Sharma",
+        "status": "To Do",
+        "assignDate": "2026-06-23",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8066,
+    "assignDate": "2026-06-24",
+    "completionDate": "",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Production support for all brokers |  | Shriram network retry loops",
+    "status": "In Progress",
+    "dueTime": "2026-06-30",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12058,
+        "title": "Production support for all brokers (Clone)",
+        "member": "Rithvik Chavhan",
+        "status": "To Do",
+        "assignDate": "2026-06-24",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8067,
+    "assignDate": "2026-06-24",
+    "completionDate": "",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Jainam <> Liberty <> prepayment validation logic optimization #40751",
+    "status": "In Progress",
+    "dueTime": "2026-07-02",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12059,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Pradeep Parihar",
+        "status": "To Do",
+        "assignDate": "2026-06-24",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8068,
+    "assignDate": "2026-06-25",
+    "completionDate": "",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Quote visibility grid layout padding corrections patch #40752",
+    "status": "In Progress",
+    "dueTime": "2026-06-26",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12060,
+        "title": "Deliverable Core Execution Base (Clone) (Clone)",
+        "member": "Joel Dcunha",
+        "status": "To Do",
+        "assignDate": "2026-06-25",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8069,
+    "assignDate": "2026-06-25",
+    "completionDate": "",
+    "member": "Dusmanta Naidu",
+    "type": "Backend",
+    "broker": "EDME",
+    "title": "EDME customer theme customization configuration variables patch #40753",
+    "status": "In Progress",
+    "dueTime": "2026-07-01",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12061,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Dusmanta Naidu",
+        "status": "To Do",
+        "assignDate": "2026-06-25",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8070,
+    "assignDate": "2026-06-25",
+    "completionDate": "",
+    "member": "Praveen Kumar Sharma",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Motor ICs proposal fields configuration validation rules setup #40756",
+    "status": "In Progress",
+    "dueTime": "2026-06-26",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12062,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Praveen Kumar Sharma",
+        "status": "To Do",
+        "assignDate": "2026-06-25",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8071,
+    "assignDate": "2026-06-25",
+    "completionDate": "",
+    "member": "Gouresh Baraskar",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Miniproposal<>Payment Flow #40757",
+    "status": "In Progress",
+    "dueTime": "2026-06-26",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12063,
+        "title": "Production support for all brokers (Clone)",
+        "member": "Gouresh Baraskar",
+        "status": "To Do",
+        "assignDate": "2026-06-25",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8072,
+    "assignDate": "2026-06-24",
+    "completionDate": "",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "Hero",
+    "title": "Hero<>prepoposal save API |  #40802",
+    "status": "In Progress",
+    "dueTime": "2026-06-26",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12064,
+        "title": "Production support for all brokers (Clone) (Clone) (Clone)",
+        "member": "Gouresh Baraskar",
+        "status": "To Do",
+        "assignDate": "2026-06-25",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8073,
+    "assignDate": "2026-06-25",
+    "completionDate": "",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU <> NTB <> PAN-VERIFY-API |  #795",
+    "status": "In Progress",
+    "dueTime": "2026-06-26",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12065,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Aniket Kamble",
+        "status": "To Do",
+        "assignDate": "2026-06-25",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8074,
+    "assignDate": "2026-06-26",
+    "completionDate": "",
+    "member": "Pradeep Parihar",
+    "type": "Backend",
+    "broker": "Hero",
+    "title": "Hero<>Renewal<>ICICI<>integration #40564",
+    "status": "In Progress",
+    "dueTime": "2026-07-01",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12066,
+        "title": "Deliverable Core Execution Base (Clone) (Clone)",
+        "member": "Pradeep Parihar",
+        "status": "To Do",
+        "assignDate": "2026-06-26",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8075,
+    "assignDate": "2026-06-26",
+    "completionDate": "",
+    "member": "Sayali Patil",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Zuno integration master payload debugging loops setup #40810",
+    "status": "In Progress",
+    "dueTime": "2026-06-29",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12067,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Sayali Patil",
+        "status": "To Do",
+        "assignDate": "2026-06-26",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8076,
+    "assignDate": "2026-06-26",
+    "completionDate": "",
+    "member": "Dusmanta Naidu",
+    "type": "Backend",
+    "broker": "EDME",
+    "title": "EDME customer payload parsing issues resolution patch #40822",
+    "status": "In Progress",
+    "dueTime": "2026-06-30",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12068,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Dusmanta Naidu",
+        "status": "To Do",
+        "assignDate": "2026-06-26",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8077,
+    "assignDate": "2026-06-29",
+    "completionDate": "",
+    "member": "Praveen Kumar Sharma",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Motor proposal validator helper classes performance update #40824",
+    "status": "In Progress",
+    "dueTime": "2026-06-30",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12069,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Praveen Kumar Sharma",
+        "status": "To Do",
+        "assignDate": "2026-06-29",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8078,
+    "assignDate": "2026-06-29",
+    "completionDate": "",
+    "member": "Aniket Mahadev Magadum",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU pipeline exception alert monitoring notifications module setup #799",
+    "status": "In Progress",
+    "dueTime": "2026-07-02",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12070,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Aniket Mahadev Magadum",
+        "status": "To Do",
+        "assignDate": "2026-06-29",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8079,
+    "assignDate": "2026-06-30",
+    "completionDate": "",
+    "member": "Raj Kale",
+    "type": "Backend",
+    "broker": "Hero Broker",
+    "title": "godigit signature validation routines hotfix #40833",
+    "status": "In Progress",
+    "dueTime": "2026-07-01",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12071,
+        "title": "Deliverable Core Execution Base",
+        "member": "Raj Kale",
+        "status": "To Do",
+        "assignDate": "2026-06-30",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8080,
+    "assignDate": "2026-06-30",
+    "completionDate": "",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "All Brokers",
+    "title": "Proposal failure visibility report database migration layers setup #40841",
+    "status": "In Progress",
+    "dueTime": "2026-07-03",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12072,
+        "title": "Deliverable Core Execution Base (Clone) (Clone)",
+        "member": "Joel Dcunha",
+        "status": "To Do",
+        "assignDate": "2026-06-30",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8081,
+    "assignDate": "2026-07-01",
+    "completionDate": "",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "IPPB",
+    "title": "IPPB master logs transmission payload structural debugging #40862",
+    "status": "In Progress",
+    "dueTime": "2026-07-02",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12073,
+        "title": "Production support for all brokers (Clone)",
+        "member": "Rithvik Chavhan",
+        "status": "To Do",
+        "assignDate": "2026-07-01",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8082,
+    "assignDate": "2026-07-01",
+    "completionDate": "",
+    "member": "Ahmed Raza",
+    "type": "Backend",
+    "broker": "Hero",
+    "title": "Hero<>Miniproposal<>Extend a static API to load the fields dynamically Proposal Page | #40873",
+    "status": "In Progress",
+    "dueTime": "2026-07-03",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12074,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Ahmed Raza Idrisi",
+        "status": "To Do",
+        "assignDate": "2026-07-01",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8083,
+    "assignDate": "2026-07-02",
+    "completionDate": "",
+    "member": "Rithvik Chavhan",
+    "type": "Backend",
+    "broker": "Hero",
+    "title": "Observations for Preproposal, Preproposal save, revamping the logic for ckyc save and preproposal save.",
+    "status": "In Progress",
+    "dueTime": "2026-07-03",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12075,
+        "title": "Production support for all brokers (Clone) (Clone) (Clone) (Clone) (Clone)",
+        "member": "Gouresh Baraskar",
+        "status": "To Do",
+        "assignDate": "2026-07-02",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8084,
+    "assignDate": "2026-07-02",
+    "completionDate": "2026-07-03",
+    "member": "Aniket Kamble",
+    "type": "AU Backend",
+    "broker": "AU",
+    "title": "AU <> NTB <> PAN-VERIFY-API |  #795",
+    "status": "Done",
+    "dueTime": "2026-06-03",
+    "pct": 100,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12076,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Aniket Kamble",
+        "status": "Done",
+        "assignDate": "2027-07-02",
+        "completionDate": "2026-07-03",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8085,
+    "assignDate": "2026-07-03",
+    "completionDate": "",
+    "member": "Sayali Patil",
+    "type": "Backend",
+    "broker": "Hero Broker",
+    "title": "production log viewer",
+    "status": "In Progress",
+    "dueTime": "2026-07-03",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12077,
+        "title": "Deliverable Core Execution Base",
+        "member": "Sayali Patil",
+        "status": "To Do",
+        "assignDate": "2026-07-03",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  },
+  {
+    "id": 8086,
+    "assignDate": "2026-07-03",
+    "completionDate": "",
+    "member": "Joel Dcunha",
+    "type": "Backend",
+    "broker": "Paytm",
+    "title": "PAYTM checksum validation pipeline patch update #40882",
+    "status": "In Progress",
+    "dueTime": "2026-07-04",
+    "pct": 0,
+    "notes": "",
+    "subTasks": [
+      {
+        "id": 12078,
+        "title": "Deliverable Core Execution Base (Clone)",
+        "member": "Joel Dcunha",
+        "status": "To Do",
+        "assignDate": "2026-07-03",
+        "completionDate": "",
+        "logs": []
+      }
+    ],
+    "logs": [
+      {
+        "timestamp": "04/07/2026, 11:45:00 AM",
+        "description": "Restored successfully from latest July 4 detailed spreadsheet sync snapshot."
+      }
+    ]
+  }
+];
+
+let tasks = JSON.parse(localStorage.getItem('dev_tasks_data'));
+if (!tasks || tasks.length === 0) {
+  tasks = permanentDataFailSafe;
+  localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
+}
+
+let updatedMigration = false;
+tasks = tasks.map(t => {
+  let migrated = false;
+  if (!t.subTasks) {
+    t.subTasks = [{
+      id: Math.floor(Math.random() * 1000000),
+      title: t.title || 'Base Deliverable Implementation',
+      member: t.member || 'Unassigned',
+      status: t.status || 'To Do',
+      assignDate: t.assignDate || new Date().toISOString().split('T')[0],
+      completionDate: t.status === 'Done' ? new Date().toISOString().split('T')[0] : '',
+      logs: []
+    }];
+    migrated = true;
+  }
+  
+  t.subTasks.forEach(st => {
+    if (st.subId && !st.id) {
+      st.id = st.subId;
+      migrated = true;
+    }
+  });
+  if (!t.hasOwnProperty('completionDate')) {
+    t.completionDate = t.status === 'Done' ? (t.dueTime || new Date().toISOString().split('T')[0]) : '';
+    migrated = true;
+  }
+  if (migrated) updatedMigration = true;
+  return t;
+});
+
+if (updatedMigration) {
+  localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
+}
 
 let nextId = parseInt(localStorage.getItem('dev_tasks_next_id')) || (tasks.length ? Math.max(...tasks.map(x=>x.id))+1 : 1);
 let sortCol = 'assignDate', sortDir = 1;
@@ -558,6 +3099,7 @@ let editingId = null;
 let currentRole = localStorage.getItem('dev_tasks_role') || 'Admin';
 let expandedTaskIds = new Set();
 
+// ─── SYNCHRONIZED STORAGE SYSTEM WITH GOOGLE SHEET API CLOUD ROUTER ──────────
 function saveToLocalStorage() {
   localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
   localStorage.setItem('dev_tasks_next_id', nextId);
@@ -885,7 +3427,7 @@ function renderTable() {
   populateFilters();
 }
 
-// ─── INLINE ENGINE CELL CELL MUTATION CONTROLLERS ────────────────────────────
+// ─── INLINE ENGINE CELL MUTATION CONTROLLERS ─────────────────────────────────
 function editCell(id, field, cell) {
   if (field !== 'pct' && currentRole !== 'Admin') return;
   if (field === 'pct' && currentRole === 'Viewer') return;
@@ -1246,6 +3788,9 @@ function exportExcel() {
   toast(`Report downloaded successfully ✅`);
 }
 
+// Keyboard Escape Hook
+document.addEventListener('keydown', e => { if(e.key==='Escape') { closeModal(); closeLogModal(); } });
+
 // ─── INITIAL APP EXECUTION BOOT ──────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
@@ -1269,14 +3814,25 @@ window.addEventListener('DOMContentLoaded', () => {
           renderTable();
           toast("Loaded fresh live team sheet metrics!", "🌐");
         } else {
+          // If database is empty, load the static fail-safe backup array
+          tasks = permanentDataFailSafe;
+          nextId = tasks.length ? Math.max(...tasks.map(x => x.id)) + 1 : 1;
+          saveToLocalStorage();
           renderTable();
         }
       })
       .catch(err => {
-        console.error("Cloud fetch failed, fallback to local instance storage records:", err);
+        console.error("Cloud fetch failed, using fallback mirrors:", err);
+        let backup = localStorage.getItem('dev_tasks_data');
+        if (backup && JSON.parse(backup).length > 0) {
+          tasks = JSON.parse(backup);
+        } else {
+          tasks = permanentDataFailSafe;
+        }
         renderTable();
       });
   } else {
+    tasks = permanentDataFailSafe;
     renderTable();
   }
 });
