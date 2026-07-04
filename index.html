@@ -3104,16 +3104,21 @@ function saveToLocalStorage() {
   localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
   localStorage.setItem('dev_tasks_next_id', nextId);
   
-  // Make sure this check is exactly !== "" so the save executes!
   if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "") {
     fetch(GOOGLE_DATABASE_URL, {
       method: "POST",
       mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ action: "sync", data: tasks })
     })
-    .then(() => console.log("Cloud repository sheets synchronized perfectly."))
-    .catch(() => console.warn("Cloud connection currently unestablished. Using local fallback instead."));
+    .then(() => {
+      console.log("Cloud repository sheets synchronized perfectly.");
+      toast("Data saved to sheet!", "✅");
+    })
+    .catch((err) => {
+      console.warn("Cloud connection error.", err);
+      toast("Offline mode: Data saved locally.", "💾");
+    });
   }
 }
 // ─── ACCESS CONTROL INTERFACES ───────────────────────────────────────────────
