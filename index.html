@@ -3104,6 +3104,7 @@ function saveToLocalStorage() {
   localStorage.setItem('dev_tasks_data', JSON.stringify(tasks));
   localStorage.setItem('dev_tasks_next_id', nextId);
   
+  // Make sure this check is exactly !== "" so the save executes!
   if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "") {
     fetch(GOOGLE_DATABASE_URL, {
       method: "POST",
@@ -3115,7 +3116,6 @@ function saveToLocalStorage() {
     .catch(() => console.warn("Cloud connection currently unestablished. Using local fallback instead."));
   }
 }
-
 // ─── ACCESS CONTROL INTERFACES ───────────────────────────────────────────────
 function changeUserRole(newRole) {
   currentRole = newRole;
